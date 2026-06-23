@@ -8,33 +8,7 @@ FISC安全対策基準に準拠した、セキュアで高可用性な AWS EKS 3
 
 本インフラは、パブリック、プライベート、およびインターネットから完全に分離されたアイソレート（孤立）の3つのレイヤーで構成されています。
 
-```mermaid
-graph TD
-    Internet[インターネット] <-->|HTTP/HTTPS| WAF[AWS WAFv2]
-    WAF <--> ALB[Application Load Balancer]
-    
-    subgraph VPC [VPC: 10.0.0.0/16]
-        subgraph Public_Subnets [パブリックサブネット x3]
-            ALB
-            NAT[NAT Gateway x1-3]
-        end
-
-        subgraph Private_Subnets [プライベートサブネット x3]
-            EKS[EKS Worker Nodes]
-            VPCE[VPC Endpoints]
-        end
-
-        subgraph Isolated_Subnets [アイソレートサブネット x3]
-            Aurora[(Aurora PostgreSQL Serverless v2)]
-            Redis[(ElastiCache Redis)]
-        end
-    end
-
-    EKS -->|ECR, S3, STS, CloudWatch Logs| VPCE
-    EKS -->|外部連携| NAT --> Internet
-    EKS -->|PostgreSQL: 5432| Aurora
-    EKS -->|Redis: 6379| Redis
-```
+![System Architecture](docs/images/architecture.png)
 
 ---
 
