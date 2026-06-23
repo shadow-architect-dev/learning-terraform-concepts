@@ -330,16 +330,16 @@
     <text x="75" y="200" text-anchor="end" font-size="9" fill="#991b1b" font-weight="700">1. DNS Query</text>
 
     <!-- 2. Internet to ALB (Direct) -->
-    <path d="M 140 135 L 590 135 L 590 178" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 140 135 L 675 135 L 675 178" class="flow-line-blue" marker-end="url(#arrow-blue)" />
     <g transform="translate(174, 115)">
       <text x="0" y="10" font-size="9" font-weight="700" fill="#1d4ed8">2. User Request (HTTPS :443)</text>
     </g>
 
     <!-- 3. ALB to EKS Node Pods (IP routing via VPC CNI) -->
-    <path d="M 590 263 L 590 315" class="flow-line-blue" />
-    <path d="M 590 315 L 540 315 L 540 650 L 510 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
-    <path d="M 590 315 L 775 315 L 775 650 L 745 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
-    <path d="M 590 315 L 1020 315 L 1020 650 L 990 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 675 263 L 675 315" class="flow-line-blue" />
+    <path d="M 675 315 L 540 315 L 540 650 L 520 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 675 315 L 775 315 L 775 650 L 755 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 675 315 L 1020 315 L 1020 650 L 1000 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
 
     <!-- Port 80/443 Badge on ALB -> EKS Pods -->
     <g transform="translate(775, 305)">
@@ -352,7 +352,7 @@
     <path d="M 490 340 L 490 263" class="flow-line-dash" marker-end="url(#arrow)" />
     <path d="M 725 340 L 725 325 L 490 325 L 490 263" class="flow-line-dash" marker-end="url(#arrow)" />
     <!-- NAT GW to IGW for Internet access -->
-    <path d="M 370 220.5 L 322 220.5 L 322 135 L 140 135" class="flow-line-dash" marker-end="url(#arrow)" />
+    <path d="M 370 220.5 L 322 220.5 L 322 160 L 140 160" class="flow-line-dash" marker-end="url(#arrow)" />
     <text x="350" y="213" font-size="8" font-weight="600" fill="#64748b">Egress to Internet</text>
 
 
@@ -416,8 +416,8 @@
     <!-- Pod A <-> Pod B Service Mesh mTLS Traffic via ztunnel (Nodes Internal L4 Encryption) -->
     <!-- Pod A-1 (Right) -> ztunnel (Inbound Redirection, dashed) - Bypasses cards on the right (x=530) -> ztunnel border (x=520) -->
     <path d="M 510 650 L 530 650 L 530 420 L 520 420" class="flow-line-red" stroke-dasharray="3 3" marker-end="url(#arrow-red)" />
-    <!-- ztunnel -> Pod B-1 (Left) (Outbound Delivery, encrypted solid) - Bypasses cards on the left (x=360) -> Pod B-1 (x=380) -->
-    <path d="M 370 440 L 360 440 L 360 692 L 380 692" class="flow-line-red" marker-end="url(#arrow-red)" />
+    <!-- ztunnel -> Pod B-1 (Left) (Outbound Delivery, encrypted solid) - Bypasses cards on the left (x=360) -> Pod B-1 (x=380) - Connected exactly to ztunnel left border (y=430) -->
+    <path d="M 370 430 L 360 430 L 360 692 L 380 692" class="flow-line-red" marker-end="url(#arrow-red)" />
     <text x="500" y="405" font-size="8" fill="#e11d48" font-weight="700">mTLS Encryption</text>
   </g>
 </svg>
