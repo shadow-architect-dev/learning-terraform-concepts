@@ -30,3 +30,13 @@ variable "node_min_size" {
   type        = number
   description = "Minimum number of worker nodes"
 }
+
+variable "log_archive_account_id" {
+  type        = string
+  description = "AWS Account ID of the Log Archive account"
+}
+
+variable "aws_region" {
+  type        = string
+  description = "Target AWS Region"
+}

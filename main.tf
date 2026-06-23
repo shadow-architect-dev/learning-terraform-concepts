@@ -8,15 +8,17 @@ module "security" {
   env_name = var.env_name
 }
 module "eks" {
-  source             = "./modules/eks"
-  env_name           = var.env_name
-  vpc_id             = module.vpc.vpc_id
-  private_subnet_ids = module.vpc.private_subnet_ids
-  kms_key_arn        = module.security.kms_key_arn
-  node_instance_type = var.eks_node_instance_type
-  node_desired_size  = var.eks_node_desired_size
-  node_max_size      = var.eks_node_max_size
-  node_min_size      = var.eks_node_min_size
+  source                 = "./modules/eks"
+  env_name               = var.env_name
+  vpc_id                 = module.vpc.vpc_id
+  private_subnet_ids     = module.vpc.private_subnet_ids
+  kms_key_arn            = module.security.kms_key_arn
+  node_instance_type     = var.eks_node_instance_type
+  node_desired_size      = var.eks_node_desired_size
+  node_max_size          = var.eks_node_max_size
+  node_min_size          = var.eks_node_min_size
+  log_archive_account_id = var.log_archive_account_id
+  aws_region             = var.aws_region
 }
 module "database" {
   source                     = "./modules/database"

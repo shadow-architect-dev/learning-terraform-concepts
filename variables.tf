@@ -60,3 +60,8 @@ variable "waf_bypass_ip_cidrs" {
   default     = []
   description = "IP CIDR list allowed to bypass maintenance mode"
 }
+
+variable "log_archive_account_id" {
+  type        = string
+  description = "AWS Account ID of the Log Archive account"
+}
