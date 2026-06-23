@@ -2,11 +2,11 @@
 
 # 1. Cilium: CNI Chaining Mode (Co-exists with AWS VPC CNI under EKS Auto Mode)
 resource "helm_release" "cilium" {
-  name             = "cilium"
-  repository       = "https://helm.cilium.io/"
-  chart            = "cilium"
-  namespace        = "kube-system"
-  version          = "1.16.2" # Use a modern stable release of Cilium
+  name       = "cilium"
+  repository = "https://helm.cilium.io/"
+  chart      = "cilium"
+  namespace  = "kube-system"
+  version    = "1.16.2" # Use a modern stable release of Cilium
 
   # AWS VPC CNI Chaining configuration to prevent conflicts
   set {
@@ -82,11 +82,11 @@ resource "helm_release" "istio_base" {
 
 # 3. Istio Ambient Mesh: CNI DaemonSet (Required to redirect traffic to ztunnel)
 resource "helm_release" "istio_cni" {
-  name             = "istio-cni"
-  repository       = "https://istio-release.storage.googleapis.com/charts"
-  chart            = "cni"
-  namespace        = "istio-system"
-  version          = "1.24.1"
+  name       = "istio-cni"
+  repository = "https://istio-release.storage.googleapis.com/charts"
+  chart      = "cni"
+  namespace  = "istio-system"
+  version    = "1.24.1"
 
   # Ambient Mesh specific parameters
   set {
@@ -117,11 +117,11 @@ resource "helm_release" "istio_cni" {
 
 # 4. Istio Ambient Mesh: Istiod (Control Plane)
 resource "helm_release" "istiod" {
-  name             = "istiod"
-  repository       = "https://istio-release.storage.googleapis.com/charts"
-  chart            = "istiod"
-  namespace        = "istio-system"
-  version          = "1.24.1"
+  name       = "istiod"
+  repository = "https://istio-release.storage.googleapis.com/charts"
+  chart      = "istiod"
+  namespace  = "istio-system"
+  version    = "1.24.1"
 
   set {
     name  = "profile"
@@ -141,11 +141,11 @@ resource "helm_release" "istiod" {
 
 # 5. Istio Ambient Mesh: Ztunnel (DaemonSet for secure L4 mutual TLS)
 resource "helm_release" "ztunnel" {
-  name             = "ztunnel"
-  repository       = "https://istio-release.storage.googleapis.com/charts"
-  chart            = "ztunnel"
-  namespace        = "istio-system"
-  version          = "1.24.1"
+  name       = "ztunnel"
+  repository = "https://istio-release.storage.googleapis.com/charts"
+  chart      = "ztunnel"
+  namespace  = "istio-system"
+  version    = "1.24.1"
 
   # ztunnel runs as a system DaemonSet capturing node traffic
   set {

@@ -22,7 +22,7 @@ terraform {
   # }
 
   backend "s3" {
-    bucket         = "YOUR_STATE_BUCKET_NAME"   # bootstrapの実行結果(state_bucket_name)を入力
+    bucket         = "YOUR_STATE_BUCKET_NAME" # bootstrapの実行結果(state_bucket_name)を入力
     key            = "dev/terraform.tfstate"
     region         = "ap-northeast-1"
     dynamodb_table = "YOUR_DYNAMODB_TABLE_NAME" # bootstrapの実行結果(dynamodb_table_name)を入力
