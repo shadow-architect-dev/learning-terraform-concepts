@@ -32,25 +32,7 @@
 ## 🛠️ アーキテクチャのトポロジー
 
 ```mermaid
-graph TD
-    Internet[インターネット] --> ALB[EKS Managed Load Balancer]
-    
-    subgraph EKS_Auto_Mode_Cluster ["EKS Auto Mode Cluster"]
-        subgraph EC2_Host ["Managed EC2 Host (Karpenter)"]
-            Cilium["Cilium DaemonSet (eBPF Policy)"]
-            Ztunnel["Istio ztunnel DaemonSet (L4 mTLS)"]
-            DD[Datadog Agent DaemonSet]
-            
-            PodA[App Pod A]
-            PodB[App Pod B]
-        end
-    end
-    
-    ALB -->|IP Routing via VPC CNI| PodA
-    PodA <-->|Secure L4 mTLS via ztunnel| PodB
-    DD -->|eBPF Probe| EC2_Host
-    Cilium -->|eBPF Policy Enforcement| PodA
-```
+![System Architecture](../docs/images/architecture_auto.svg)
 
 ---
 

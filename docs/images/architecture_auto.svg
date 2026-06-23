@@ -1,0 +1,385 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1420" height="830" viewBox="0 0 1420 830">
+  <defs>
+    <!-- Background grid -->
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f1f5f9" stroke-width="1" />
+    </pattern>
+    <!-- Card Shadow -->
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="116%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    <!-- Connection Markers -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#64748b" />
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#3b82f6" />
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#10b981" />
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#e11d48" />
+    </marker>
+  </defs>
+
+  <style>
+    .font-all { font-family: Inter, system-ui, -apple-system, sans-serif; }
+    .title-main { font-size: 22px; font-weight: 800; fill: #0f172a; }
+    .title-sub { font-size: 13px; fill: #64748b; }
+    .vpc-box { fill: #fcfdfe; stroke: #475569; stroke-width: 2.5; stroke-dasharray: 6 6; rx: 16; }
+    .vpc-label { font-size: 14px; font-weight: 700; fill: #475569; }
+    .az-line { stroke: #cbd5e1; stroke-width: 1.5; stroke-dasharray: 4 4; }
+    .az-label { font-size: 12px; font-weight: 600; fill: #94a3b8; }
+    
+    /* Subnet Styles */
+    .subnet-public { fill: #fffbeb; stroke: #f59e0b; stroke-width: 1.5; rx: 12; }
+    .subnet-private { fill: #eff6ff; stroke: #3b82f6; stroke-width: 1.5; rx: 12; }
+    .subnet-title { font-size: 11px; font-weight: 700; }
+    .subnet-title.pub { fill: #b45309; }
+    .subnet-title.priv { fill: #1d4ed8; }
+
+    /* Card Styles */
+    .card { fill: #ffffff; stroke: #e2e8f0; stroke-width: 1; rx: 8; }
+    .card-title { font-size: 12px; font-weight: 700; fill: #1e293b; }
+    .card-subtitle { font-size: 10px; fill: #64748b; font-family: monospace; }
+    
+    /* Connections */
+    .flow-line { stroke: #64748b; stroke-width: 2; fill: none; stroke-linecap: round; }
+    .flow-line-blue { stroke: #3b82f6; stroke-width: 2; fill: none; stroke-linecap: round; }
+    .flow-line-green { stroke: #10b981; stroke-width: 2; fill: none; stroke-linecap: round; }
+    .flow-line-red { stroke: #e11d48; stroke-width: 2; fill: none; stroke-linecap: round; }
+    .flow-line-dash { stroke: #94a3b8; stroke-width: 1.5; fill: none; stroke-dasharray: 4 4; }
+    .port-badge { fill: #f1f5f9; stroke: #cbd5e1; stroke-width: 1; rx: 4; }
+    .port-text { font-size: 10px; font-weight: 700; fill: #475569; text-anchor: middle; font-family: monospace; }
+  </style>
+
+  <!-- Background Canvas -->
+  <rect width="100%" height="100%" fill="#f8fafc" />
+  <rect width="100%" height="100%" fill="url(#grid)" />
+
+  <g class="font-all">
+    <!-- Header -->
+    <text x="40" y="45" class="title-main">EKS Auto Mode &amp; Modern Network Stack Topology</text>
+    <text x="40" y="65" class="title-sub">AWS EKS v1.32: Auto Mode (Karpenter) + Cilium (CNI Chaining) + Istio Ambient Mesh (ztunnel) + Datadog Agent</text>
+
+    <!-- Legend (Top Right) -->
+    <g transform="translate(1070, 20)">
+      <rect x="0" y="0" width="310" height="40" fill="#ffffff" stroke="#e2e8f0" rx="6" filter="url(#shadow)" />
+      
+      <circle cx="20" cy="20" r="6" fill="#f59e0b" />
+      <text x="32" y="24" font-size="11" font-weight="600" fill="#1e293b">Public</text>
+
+      <circle cx="100" cy="20" r="6" fill="#3b82f6" />
+      <text x="112" y="24" font-size="11" font-weight="600" fill="#1e293b">Private (EKS)</text>
+
+      <circle cx="200" cy="20" r="6" fill="#e11d48" />
+      <text x="212" y="24" font-size="11" font-weight="600" fill="#1e293b">System DaemonSet</text>
+    </g>
+
+    <!-- ==================== OUTER SYSTEMS (EDGE) ==================== -->
+    <!-- 1. Internet Client -->
+    <g transform="translate(30, 90)" filter="url(#shadow)">
+      <rect width="110" height="90" class="card" />
+      <path d="M 55 25 C 48 25, 43 30, 43 36 C 37 37, 33 42, 33 48 C 33 54, 38 59, 44 59 L 76 59 C 81 59, 86 54, 86 48 C 86 43, 82 38, 77 37 C 76 30, 70 25, 63 25 C 60 25, 57 26, 55 28 Z" fill="#94a3b8" />
+      <text x="55" y="75" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">Internet</text>
+    </g>
+
+    <!-- 2. Amazon Route 53 (DNS) -->
+    <g transform="translate(30, 220)" filter="url(#shadow)">
+      <rect width="110" height="90" class="card" style="stroke: #ef4444; stroke-width: 1.5;" />
+      <circle cx="55" cy="40" r="16" fill="#ef4444" opacity="0.2" />
+      <path d="M 45 40 L 65 40 M 55 30 L 55 50" stroke="#ef4444" stroke-width="2" stroke-linecap="round" fill="none" />
+      <path d="M 48 33 L 62 47" stroke="#ef4444" stroke-linecap="round" fill="none" />
+      <text x="55" y="75" text-anchor="middle" font-size="11" font-weight="700" fill="#991b1b">Route 53 (DNS)</text>
+    </g>
+
+    <!-- ==================== REGIONAL VPC ==================== -->
+    <g transform="translate(340, 80)">
+      <rect width="750" height="720" class="vpc-box" />
+      <text x="20" y="28" class="vpc-label">VPC (10.10.0.0/16)</text>
+      
+      <!-- Internet Gateway on VPC Border -->
+      <g transform="translate(-18, 172)" filter="url(#shadow)">
+        <circle cx="18" cy="18" r="18" fill="#3b82f6" />
+        <path d="M 10 18 L 26 18 M 18 10 L 18 26 M 13 13 L 23 23 M 13 23 L 23 13" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+        <text x="42" y="22" font-size="10" font-weight="700" fill="#1d4ed8">IGW</text>
+      </g>
+
+      <!-- S3 Gateway Endpoint on VPC Border -->
+      <g transform="translate(742, 595)" filter="url(#shadow)">
+        <circle cx="18" cy="18" r="18" fill="#15803d" />
+        <path d="M 10 18 L 26 18 M 20 12 L 26 18 L 20 24" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none" />
+        <text x="18" y="-12" font-size="9" font-weight="700" fill="#166534" text-anchor="middle">S3 Endpoint</text>
+        <text x="18" y="-2" font-size="8" fill="#166534" text-anchor="middle">(Gateway)</text>
+      </g>
+
+      <!-- AZ Columns Boundaries (Dashed Lines) -->
+      <line x1="242" y1="45" x2="242" y2="700" class="az-line" />
+      <line x1="488" y1="45" x2="488" y2="700" class="az-line" />
+
+      <!-- AZ Labels (Left-Aligned) -->
+      <text x="15" y="45" class="az-label">AZ-A (ap-northeast-1a)</text>
+      <text x="260" y="45" class="az-label">AZ-B (ap-northeast-1c)</text>
+      <text x="505" y="45" class="az-label">AZ-C (ap-northeast-1d)</text>
+
+      <!-- ==================== SUBNET LAYER 1: PUBLIC ==================== -->
+      <g transform="translate(15, 60)">
+        <rect width="720" height="145" class="subnet-public" />
+        <text x="10" y="18" class="subnet-title pub">Public Subnets</text>
+        
+        <!-- NAT Gateway (Single NAT GW, dev environment) -->
+        <g transform="translate(15, 38)" filter="url(#shadow)">
+          <rect width="180" height="85" class="card" />
+          <circle cx="28" cy="43" r="14" fill="#f59e0b" opacity="0.2" />
+          <path d="M 22 43 L 34 43 M 28 37 L 28 49 M 24 39 L 32 47" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" fill="none" />
+          <text x="52" y="44" class="card-title">NAT Gateway 1</text>
+          <text x="52" y="62" font-size="9" fill="#64748b">Outbound Route</text>
+        </g>
+
+        <!-- ALB + WAF WebACL Protected Group (Auto Mode Managed) -->
+        <g transform="translate(235, 38)" filter="url(#shadow)">
+          <rect width="200" height="85" class="card" style="stroke: #ef4444; stroke-width: 1.5;" />
+          <circle cx="28" cy="42" r="14" fill="#ef4444" opacity="0.15" />
+          <path d="M 28 32 C 28 32, 35 34, 35 39 C 35 45, 28 49, 28 49 C 28 49, 21 45, 21 39 C 21 34, 28 32, 28 32 Z" fill="#ef4444" />
+          <text x="52" y="32" class="card-title" fill="#b91c1c">AWS WAFv2 (WebACL)</text>
+          <text x="52" y="46" font-size="9" font-weight="600" fill="#991b1b">ELB Auto-Provisioned</text>
+          <line x1="52" y1="52" x2="190" y2="52" stroke="#fecaca" stroke-width="1" />
+          
+          <!-- ALB Info -->
+          <text x="52" y="66" class="card-title" font-size="11">Managed Load Balancer</text>
+          <text x="52" y="78" class="card-subtitle" font-size="8">Managed by EKS Auto Mode</text>
+        </g>
+      </g>
+
+
+      <!-- ==================== SUBNET LAYER 2: PRIVATE (EKS + Karpenter Nodes) ==================== -->
+      <g transform="translate(15, 225)">
+        <rect width="720" height="475" class="subnet-private" />
+        <text x="10" y="18" class="subnet-title priv">Private Subnets (EKS Auto Mode &amp; Service Mesh Layer)</text>
+
+        <!-- EKS Managed Karpenter Nodes -->
+        
+        <!-- Karpenter Node A (AZ-A) -->
+        <g transform="translate(15, 35)">
+          <rect width="210" height="420" rx="10" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)" />
+          <text x="15" y="25" font-size="12" font-weight="700" fill="#1d4ed8">EC2 Node (AZ-a / Karpenter)</text>
+          <text x="15" y="40" class="card-subtitle">EKS Auto Mode managed</text>
+
+          <!-- ztunnel (Istio L4 mTLS DaemonSet) -->
+          <g transform="translate(15, 60)" filter="url(#shadow)">
+            <rect width="180" height="60" class="card" style="stroke: #ef4444; stroke-width: 1.2;" />
+            <circle cx="20" cy="30" r="10" fill="#ef4444" opacity="0.15" />
+            <text x="40" y="28" class="card-title" fill="#be123c">ztunnel (DaemonSet)</text>
+            <text x="40" y="44" class="card-subtitle">Istio L4 Mutual TLS</text>
+          </g>
+
+          <!-- Cilium (eBPF CNI Chaining DaemonSet) -->
+          <g transform="translate(15, 130)" filter="url(#shadow)">
+            <rect width="180" height="60" class="card" style="stroke: #10b981; stroke-width: 1.2;" />
+            <circle cx="20" cy="30" r="10" fill="#10b981" opacity="0.15" />
+            <text x="40" y="28" class="card-title" fill="#047857">Cilium (eBPF Policy)</text>
+            <text x="40" y="44" class="card-subtitle">cni.exclusive=false</text>
+          </g>
+
+          <!-- Datadog Agent (NPM eBPF DaemonSet) -->
+          <g transform="translate(15, 200)" filter="url(#shadow)">
+            <rect width="180" height="60" class="card" style="stroke: #3b82f6; stroke-width: 1.2;" />
+            <circle cx="20" cy="30" r="10" fill="#3b82f6" opacity="0.15" />
+            <text x="40" y="28" class="card-title" fill="#1d4ed8">Datadog Agent</text>
+            <text x="40" y="44" class="card-subtitle">HostNetwork = true</text>
+          </g>
+
+          <!-- Application Pods Inside Node -->
+          <g transform="translate(15, 280)">
+            <rect width="180" height="120" rx="6" fill="#f8fafc" stroke="#cbd5e1" />
+            <text x="10" y="18" font-size="10" font-weight="700" fill="#475569">K8s Pods</text>
+            
+            <!-- App Pod A -->
+            <rect x="15" y="30" width="150" height="32" rx="4" fill="#eff6ff" stroke="#93c5fd" />
+            <text x="25" y="50" font-size="11" font-weight="700" fill="#1d4ed8">App Pod A-1</text>
+
+            <!-- App Pod B -->
+            <rect x="15" y="72" width="150" height="32" rx="4" fill="#f0fdf4" stroke="#86efac" />
+            <text x="25" y="92" font-size="11" font-weight="700" fill="#15803d">App Pod B-1</text>
+          </g>
+        </g>
+
+        <!-- Karpenter Node B (AZ-B) -->
+        <g transform="translate(250, 35)">
+          <rect width="210" height="420" rx="10" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)" />
+          <text x="15" y="25" font-size="12" font-weight="700" fill="#1d4ed8">EC2 Node (AZ-b / Karpenter)</text>
+          <text x="15" y="40" class="card-subtitle">EKS Auto Mode managed</text>
+
+          <!-- ztunnel (Istio L4 mTLS DaemonSet) -->
+          <g transform="translate(15, 60)" filter="url(#shadow)">
+            <rect width="180" height="60" class="card" style="stroke: #ef4444; stroke-width: 1.2;" />
+            <text x="40" y="28" class="card-title" fill="#be123c">ztunnel (DaemonSet)</text>
+            <text x="40" y="44" class="card-subtitle">Istio L4 Mutual TLS</text>
+          </g>
+
+          <!-- Cilium (eBPF CNI Chaining DaemonSet) -->
+          <g transform="translate(15, 130)" filter="url(#shadow)">
+            <rect width="180" height="60" class="card" style="stroke: #10b981; stroke-width: 1.2;" />
+            <text x="40" y="28" class="card-title" fill="#047857">Cilium (eBPF Policy)</text>
+            <text x="40" y="44" class="card-subtitle">cni.exclusive=false</text>
+          </g>
+
+          <!-- Datadog Agent (NPM eBPF DaemonSet) -->
+          <g transform="translate(15, 200)" filter="url(#shadow)">
+            <rect width="180" height="60" class="card" style="stroke: #3b82f6; stroke-width: 1.2;" />
+            <text x="40" y="28" class="card-title" fill="#1d4ed8">Datadog Agent</text>
+            <text x="40" y="44" class="card-subtitle">HostNetwork = true</text>
+          </g>
+
+          <!-- Application Pods Inside Node -->
+          <g transform="translate(15, 280)">
+            <rect width="180" height="120" rx="6" fill="#f8fafc" stroke="#cbd5e1" />
+            <text x="10" y="18" font-size="10" font-weight="700" fill="#475569">K8s Pods</text>
+            
+            <rect x="15" y="30" width="150" height="32" rx="4" fill="#eff6ff" stroke="#93c5fd" />
+            <text x="25" y="50" font-size="11" font-weight="700" fill="#1d4ed8">App Pod A-2</text>
+
+            <rect x="15" y="72" width="150" height="32" rx="4" fill="#f0fdf4" stroke="#86efac" />
+            <text x="25" y="92" font-size="11" font-weight="700" fill="#15803d">App Pod B-2</text>
+          </g>
+        </g>
+
+        <!-- Karpenter Node C (AZ-C) -->
+        <g transform="translate(495, 35)">
+          <rect width="210" height="420" rx="10" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)" />
+          <text x="15" y="25" font-size="12" font-weight="700" fill="#1d4ed8">EC2 Node (AZ-c / Karpenter)</text>
+          <text x="15" y="40" class="card-subtitle">EKS Auto Mode managed</text>
+
+          <!-- ztunnel (Istio L4 mTLS DaemonSet) -->
+          <g transform="translate(15, 60)" filter="url(#shadow)">
+            <rect width="180" height="60" class="card" style="stroke: #ef4444; stroke-width: 1.2;" />
+            <text x="40" y="28" class="card-title" fill="#be123c">ztunnel (DaemonSet)</text>
+            <text x="40" y="44" class="card-subtitle">Istio L4 Mutual TLS</text>
+          </g>
+
+          <!-- Cilium (eBPF CNI Chaining DaemonSet) -->
+          <g transform="translate(15, 130)" filter="url(#shadow)">
+            <rect width="180" height="60" class="card" style="stroke: #10b981; stroke-width: 1.2;" />
+            <text x="40" y="28" class="card-title" fill="#047857">Cilium (eBPF Policy)</text>
+            <text x="40" y="44" class="card-subtitle">cni.exclusive=false</text>
+          </g>
+
+          <!-- Datadog Agent (NPM eBPF DaemonSet) -->
+          <g transform="translate(15, 200)" filter="url(#shadow)">
+            <rect width="180" height="60" class="card" style="stroke: #3b82f6; stroke-width: 1.2;" />
+            <text x="40" y="28" class="card-title" fill="#1d4ed8">Datadog Agent</text>
+            <text x="40" y="44" class="card-subtitle">HostNetwork = true</text>
+          </g>
+
+          <!-- Application Pods Inside Node -->
+          <g transform="translate(15, 280)">
+            <rect width="180" height="120" rx="6" fill="#f8fafc" stroke="#cbd5e1" />
+            <text x="10" y="18" font-size="10" font-weight="700" fill="#475569">K8s Pods</text>
+            
+            <rect x="15" y="30" width="150" height="32" rx="4" fill="#eff6ff" stroke="#93c5fd" />
+            <text x="25" y="50" font-size="11" font-weight="700" fill="#1d4ed8">App Pod A-3</text>
+
+            <rect x="15" y="72" width="150" height="32" rx="4" fill="#f0fdf4" stroke="#86efac" />
+            <text x="25" y="92" font-size="11" font-weight="700" fill="#15803d">App Pod B-3</text>
+          </g>
+        </g>
+      </g>
+    </g>
+
+    <!-- ==================== FLOW CONNECTIONS (ARROWS) ==================== -->
+    <!-- 1. Route 53 DNS Interaction -->
+    <path d="M 85 180 L 85 220" class="flow-line-dash" marker-end="url(#arrow)" />
+    <path d="M 100 220 L 100 180" class="flow-line-dash" marker-end="url(#arrow)" />
+    <text x="75" y="200" text-anchor="end" font-size="9" fill="#991b1b" font-weight="700">1. DNS Query</text>
+
+    <!-- 2. Internet to ALB (Direct) -->
+    <path d="M 140 135 L 590 135 L 590 178" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <g transform="translate(174, 115)">
+      <text x="0" y="10" font-size="9" font-weight="700" fill="#1d4ed8">2. User Request (HTTPS :443)</text>
+    </g>
+
+    <!-- 3. ALB to EKS Node Pods (IP routing via VPC CNI) -->
+    <path d="M 590 263 L 590 315" class="flow-line-blue" />
+    <path d="M 590 315 L 490 315 L 490 535 L 505 535" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 590 315 L 725 315 L 725 535 L 740 535" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 590 315 L 970 315 L 970 535 L 985 535" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+
+    <!-- Port 80/443 Badge on ALB -> EKS Pods -->
+    <g transform="translate(775, 305)">
+      <rect width="65" height="18" class="port-badge" />
+      <text x="32.5" y="12" class="port-text">VPC CNI :IP</text>
+    </g>
+    <text x="775" y="298" font-size="9" font-weight="700" fill="#1d4ed8">3. Direct Route to Pods</text>
+
+    <!-- 4. EKS Node Outbound (Egress) to NAT Gateway -->
+    <path d="M 490 340 L 490 263" class="flow-line-dash" marker-end="url(#arrow)" />
+    <path d="M 725 340 L 725 325 L 490 325 L 490 263" class="flow-line-dash" marker-end="url(#arrow)" />
+    <!-- NAT GW to IGW for Internet access -->
+    <path d="M 370 220.5 L 322 220.5 L 322 135 L 140 135" class="flow-line-dash" marker-end="url(#arrow)" />
+    <text x="350" y="213" font-size="8" font-weight="600" fill="#64748b">Egress to Internet</text>
+
+
+    <!-- ==================== AWS REGION SERVICES ==================== -->
+    <!-- CloudWatch Logs (Region Service) -->
+    <g transform="translate(1120, 80)" filter="url(#shadow)">
+      <rect width="270" height="120" class="card" style="stroke: #3b82f6; stroke-width: 1.5; stroke-dasharray: 4 4;" />
+      <circle cx="28" cy="45" r="14" fill="#3b82f6" opacity="0.15" />
+      <path d="M 20 40 L 36 40 M 20 45 L 36 45 M 20 50 L 30 50" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" fill="none" />
+      <text x="52" y="32" class="card-title" fill="#1d4ed8">Amazon CloudWatch Logs</text>
+      <text x="52" y="48" class="card-subtitle" font-weight="700">Log Group: eks-logs-dev</text>
+      <text x="52" y="60" class="card-subtitle">/aws/eks/cluster-dev</text>
+      
+      <!-- Filter Info badge -->
+      <rect x="52" y="74" width="200" height="34" fill="#eff6ff" rx="4" stroke="#bfdbfe" stroke-width="1" />
+      <text x="60" y="87" font-size="8.5" font-weight="700" fill="#1e40af">EKS Control Plane Audit</text>
+      <text x="60" y="98" font-size="8" fill="#1e40af">Fully Encrypted via KMS CMK</text>
+    </g>
+
+    <!-- VPC Endpoints (PrivateLink) -->
+    <g transform="translate(1120, 225)" filter="url(#shadow)">
+      <rect width="270" height="160" class="card" style="stroke: #10b981; stroke-width: 1.5;" />
+      <circle cx="28" cy="45" r="14" fill="#10b981" opacity="0.15" />
+      <path d="M 20 45 C 20 33, 36 33, 36 45 M 20 45 L 36 45" stroke="#10b981" stroke-width="2" stroke-linecap="round" fill="none" />
+      <text x="52" y="32" class="card-title" fill="#15803d">VPC Endpoints (PrivateLink)</text>
+      <text x="52" y="48" class="card-subtitle" font-weight="700">Interface: ECR / STS / Logs</text>
+      <text x="52" y="60" class="card-subtitle">Gateway: Amazon S3</text>
+      <text x="52" y="72" class="card-subtitle" fill="#64748b">Cross-AZ High Availability</text>
+
+      <rect x="15" y="88" width="240" height="60" fill="#f0fdf4" rx="4" stroke="#bbf7d0" stroke-width="1" />
+      <text x="25" y="103" font-size="9" font-weight="700" fill="#15803d">FISC Compliant Closed-Loop Routing</text>
+      <text x="25" y="118" font-size="8" fill="#166534">EKS pulls registry images and uploads logs</text>
+      <text x="25" y="133" font-size="8" fill="#166534">without traversing the public internet.</text>
+    </g>
+
+    <!-- Amazon S3 (Asset and Log Storage) -->
+    <g transform="translate(1120, 480)" filter="url(#shadow)">
+      <rect width="270" height="110" class="card" style="stroke: #15803d; stroke-width: 1.5;" />
+      <circle cx="28" cy="45" r="14" fill="#15803d" opacity="0.15" />
+      <path d="M 20 38 L 36 38 L 36 54 A 8 8 0 0 1 20 54 Z" fill="none" stroke="#15803d" stroke-width="2" />
+      <path d="M 20 44 L 36 44 M 20 50 L 36 50" stroke="#15803d" stroke-width="1.5" />
+      <text x="52" y="32" class="card-title" fill="#166534">Amazon S3 (Asset &amp; Log Storage)</text>
+      <text x="52" y="48" class="card-subtitle" font-weight="700">Bucket: EKS backup / logs</text>
+      <text x="52" y="60" class="card-subtitle">Private access via VPC Gateway Endpoint</text>
+      <text x="52" y="76" font-size="9" font-weight="600" fill="#15803d">Encrypted via KMS CMK</text>
+    </g>
+
+    <!-- ==================== LOG PIPELINE FLOWS ==================== -->
+    <!-- EKS Nodes to CloudWatch Logs -->
+    <path d="M 560 395 L 1120 140" class="flow-line-dash" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow-blue)" />
+    <path d="M 805 395 L 1120 140" class="flow-line-dash" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow-blue)" />
+    <path d="M 1055 395 L 1120 140" class="flow-line-dash" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow-blue)" />
+
+    <!-- EKS Nodes to S3 via S3 Gateway Endpoint -->
+    <path d="M 1040 450 L 1080 450 L 1080 675 L 1120 675" class="flow-line-dash" stroke="#15803d" stroke-width="1.5" stroke-dasharray="3 3" fill="none" />
+    <path d="M 1082 675 L 1120 675" class="flow-line-green" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" />
+    
+    <!-- EKS Nodes to VPC Endpoints (PrivateLink Interface) -->
+    <path d="M 1055 380 L 1090 380 L 1090 305 L 1120 305" class="flow-line-green" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" fill="none" />
+
+    <!-- Pod A <-> Pod B Service Mesh mTLS Traffic via ztunnel (Nodes Internal L4 Encryption) -->
+    <path d="M 535 550 L 535 580 Q 515 580 500 580 Q 485 580 485 550" class="flow-line-red" stroke-dasharray="2 2" marker-end="url(#arrow-red)" />
+    <path d="M 485 510 L 485 390 L 505 390" class="flow-line-red" marker-end="url(#arrow-red)" />
+    <text x="500" y="405" font-size="8" fill="#e11d48" font-weight="700">mTLS Encryption</text>
+  </g>
+</svg>
