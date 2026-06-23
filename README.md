@@ -54,7 +54,7 @@ learning-terraform-concepts/
   └── modules/
         ├── vpc/              # VPC、3AZサブネット、NAT GW、VPCエンドポイント
         ├── security/         # KMS CMKの作成とポリシー管理
-        ├── eks/              # EKSクラスター、Node Group、OIDC、ALB Controller
+        ├── eks/              # EKSクラスター、Node Group、OIDC、ALB Controller、Fluent Bit (ログ転送)
         ├── database/         # Aurora DB、Redis、認証情報、Egress空のSG
         └── waf/              # WAFv2 WebACL、IP制限、503メンテナンス画面定義
 ```
@@ -213,3 +213,41 @@ cd eks-modern-auto/
 terraform init
 terraform validate
 ```
+
+---
+
+## 📝 ログアーカイブ（Landing Zone）への Fluent Bit ログ転送のセットアップ
+
+EKS（Workloadアカウント）側から Log Archive（Landing Zone）アカウントに対して、セキュアにコンテナログをクロスアカウント転送する構成が追加されました。
+
+### 🛠️ 構成アーキテクチャ
+* **Fluent Bit (DaemonSet)**: `logging` Namespace 上で各ワーカーノードからコンテナログを収集します。
+* **IRSA (IAM Roles for Service Accounts)**: Fluent Bit Pod が `eks-cluster-<env>-fluent-bit-irsa` ロールを借用します。
+* **クロスアカウント連携**: IRSA ロールが Log Archive 側の受信専用ロール `eks-fluent-bit-cross-account-role` を引き受け (AssumeRole)、同アカウント上の Kinesis Data Firehose へログを直接プッシュします。
+
+### 🚀 適用手順
+1. **変数の設定**:
+   ルートの `terraform.tfvars` に、ログアーカイブ先のアカウントIDを定義します。
+   ```hcl
+   log_archive_account_id = "123456789012" # ログアーカイブ側の 12桁のAWSアカウントID
+   ```
+2. **適用**:
+   リポジトリのルートディレクトリで以下を実行して、ログ転送設定をデプロイします。
+   ```bash
+   terraform init
+   terraform apply
+   ```
+
+### 🔍 動作検証手順 (疎通確認)
+1. **Podの起動確認**:
+   ```bash
+   kubectl get pods -n logging
+   # 出力結果: aws-for-fluent-bit-xxxxx が各ノード上で Running であること
+   ```
+2. **ログ確認 (送信エラーがないか)**:
+   ```bash
+   kubectl logs -n logging -l app.kubernetes.io/name=aws-for-fluent-bit
+   # AccessDeniedException や AssumeRole の失敗エラーがないことを確認します
+   ```
+3. **S3バケットでの着信確認**:
+   Log Archive アカウントの S3 バケットの `workloads/` プレフィックス配下に、GZIP圧縮されたコンテナログオブジェクトが作成されていることを確認します。
