@@ -12,6 +12,6 @@ variable "env_name" {
 
 variable "project_name" {
   type        = string
-  default     = "learning-terraform"
+  default     = "learning-terraform-concepts"
   description = "Project prefix name"
 }

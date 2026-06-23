@@ -14,20 +14,20 @@ terraform {
       version = "~> 2.0"
     }
   }
-  # 初期状態はローカルバックエンド。本番運用時は S3 + DynamoDB のバックエンドに切り替え可能
-  backend "local" {
-    path = "terraform.tfstate"
-  }
+  # 初期セットアップ時は local バックエンドで実行し、S3 作成後に移行します。
+  # 移行の際は backend "local" ブロックをコメントアウトし、backend "s3" ブロックに値を入力して terraform init を実行してください。
 
-  # リモートバックエンド（S3 + DynamoDB）へ移行する際の記述例:
-  # bootstrap 実行後に生成されたバケット名を指定して terraform init -migrate-state を実行します
-  # backend "s3" {
-  #   bucket         = "learning-terraform-state-dev-<ACCOUNT_ID>"
-  #   key            = "dev/terraform.tfstate"
-  #   region         = "ap-northeast-1"
-  #   dynamodb_table = "learning-terraform-locks-dev"
-  #   encrypt        = true
+  # backend "local" {
+  #   path = "terraform.tfstate"
   # }
+
+  backend "s3" {
+    bucket         = "YOUR_STATE_BUCKET_NAME"   # bootstrapの実行結果(state_bucket_name)を入力
+    key            = "dev/terraform.tfstate"
+    region         = "ap-northeast-1"
+    dynamodb_table = "YOUR_DYNAMODB_TABLE_NAME" # bootstrapの実行結果(dynamodb_table_name)を入力
+    encrypt        = true
+  }
 }
 provider "aws" {
   region = var.aws_region
