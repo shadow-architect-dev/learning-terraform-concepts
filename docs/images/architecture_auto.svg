@@ -414,8 +414,8 @@
     <path d="M 1055 380 L 1090 380 L 1090 305 L 1120 305" class="flow-line-green" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" fill="none" />
 
     <!-- Pod A <-> Pod B Service Mesh mTLS Traffic via ztunnel (Nodes Internal L4 Encryption) -->
-    <path d="M 535 550 L 535 580 Q 515 580 500 580 Q 485 580 485 550" class="flow-line-red" stroke-dasharray="2 2" marker-end="url(#arrow-red)" />
-    <path d="M 485 510 L 485 390 L 505 390" class="flow-line-red" marker-end="url(#arrow-red)" />
+    <path d="M 535 670 L 535 700 Q 515 700 500 700 Q 485 700 485 670" class="flow-line-red" stroke-dasharray="2 2" marker-end="url(#arrow-red)" />
+    <path d="M 485 670 L 485 390 L 505 390" class="flow-line-red" marker-end="url(#arrow-red)" />
     <text x="500" y="405" font-size="8" fill="#e11d48" font-weight="700">mTLS Encryption</text>
   </g>
 </svg>
