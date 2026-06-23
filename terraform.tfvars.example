@@ -1,0 +1,12 @@
+aws_region             = "ap-northeast-1"
+env_name               = "dev"
+vpc_cidr               = "10.0.0.0/16"
+eks_node_instance_type = "t3.medium"
+eks_node_desired_size  = 2
+eks_node_max_size      = 3
+eks_node_min_size      = 1
+db_instance_class      = "db.serverless"
+db_min_capacity        = 0.5
+db_max_capacity        = 2.0
+maintenance_mode       = false
+waf_bypass_ip_cidrs    = ["203.0.113.1/32"] # 必要に応じて自身のパブリックIPを指定
