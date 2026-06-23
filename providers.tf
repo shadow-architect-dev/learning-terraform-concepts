@@ -18,6 +18,16 @@ terraform {
   backend "local" {
     path = "terraform.tfstate"
   }
+
+  # リモートバックエンド（S3 + DynamoDB）へ移行する際の記述例:
+  # bootstrap 実行後に生成されたバケット名を指定して terraform init -migrate-state を実行します
+  # backend "s3" {
+  #   bucket         = "learning-terraform-state-dev-<ACCOUNT_ID>"
+  #   key            = "dev/terraform.tfstate"
+  #   region         = "ap-northeast-1"
+  #   dynamodb_table = "learning-terraform-locks-dev"
+  #   encrypt        = true
+  # }
 }
 provider "aws" {
   region = var.aws_region

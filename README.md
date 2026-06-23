@@ -83,3 +83,11 @@ terraform fmt -recursive
 # 3. 構文や参照関係の静的検証
 terraform validate
 ```
+
+---
+
+## 📦 リモートバックエンド（S3 + DynamoDB）による運用管理
+
+本プロジェクトは、共同開発や安全なステートロックを考慮した S3 + DynamoDB のリモートバックエンド構成に対応しています。
+
+バックエンドリソース自体の作成（ブートストラップ）および詳細な移行手順については、**[bootstrap/README.md](file:///c:/Git/learning-terraform-concepts/bootstrap/README.md)** を参照してください。
