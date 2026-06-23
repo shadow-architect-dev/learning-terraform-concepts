@@ -1,181 +1,448 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 850" width="100%" height="100%">
-  <!-- Background -->
-  <rect width="1000" height="850" fill="#f8fafc" rx="10" />
-  
-  <!-- Definitions -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1420" height="830" viewBox="0 0 1420 830">
   <defs>
-    <!-- Gradients -->
-    <linearGradient id="publicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#eff6ff" />
-      <stop offset="100%" stop-color="#dbeafe" />
-    </linearGradient>
-    <linearGradient id="privateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f0fdf4" />
-      <stop offset="100%" stop-color="#dcfce7" />
-    </linearGradient>
-    <linearGradient id="isolatedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fff7ed" />
-      <stop offset="100%" stop-color="#ffedd5" />
-    </linearGradient>
-    <linearGradient id="awsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#232f3e" />
-      <stop offset="100%" stop-color="#3b4859" />
-    </linearGradient>
-    
-    <!-- Shadow filter -->
-    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
-      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.1" />
+    <!-- Background grid -->
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f1f5f9" stroke-width="1" />
+    </pattern>
+    <!-- Card Shadow -->
+    <filter id="shadow" x="-8%" y="-8%" width="116%" height="116%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.08" />
     </filter>
-
-    <!-- Arrow markers -->
-    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#64748b" />
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <!-- Connection Markers -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#64748b" />
     </marker>
-    <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#3b82f6" />
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#3b82f6" />
     </marker>
-    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#10b981" />
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#10b981" />
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#e11d48" />
     </marker>
   </defs>
 
-  <!-- Title -->
-  <text x="40" y="45" font-family="Segoe UI, sans-serif" font-size="22" font-weight="bold" fill="#0f172a">AWS 3-Tier Multi-AZ Architecture (FISC-Compliant)</text>
-  <text x="40" y="70" font-family="Segoe UI, sans-serif" font-size="14" fill="#64748b">Secure EKS &amp; Database Topology with Egress Restrictions</text>
+  <style>
+    .font-all { font-family: Inter, system-ui, -apple-system, sans-serif; }
+    .title-main { font-size: 22px; font-weight: 800; fill: #0f172a; }
+    .title-sub { font-size: 13px; fill: #64748b; }
+    .vpc-box { fill: #fcfdfe; stroke: #475569; stroke-width: 2.5; stroke-dasharray: 6 6; rx: 16; }
+    .vpc-label { font-size: 14px; font-weight: 700; fill: #475569; }
+    .az-line { stroke: #cbd5e1; stroke-width: 1.5; stroke-dasharray: 4 4; }
+    .az-label { font-size: 12px; font-weight: 600; fill: #94a3b8; }
+    
+    /* Subnet Styles */
+    .subnet-public { fill: #fffbeb; stroke: #f59e0b; stroke-width: 1.5; rx: 12; }
+    .subnet-private { fill: #eff6ff; stroke: #3b82f6; stroke-width: 1.5; rx: 12; }
+    .subnet-isolated { fill: #ecfdf5; stroke: #10b981; stroke-width: 1.5; rx: 12; }
+    .subnet-title { font-size: 11px; font-weight: 700; }
+    .subnet-title.pub { fill: #b45309; }
+    .subnet-title.priv { fill: #1d4ed8; }
+    .subnet-title.iso { fill: #047857; }
 
-  <!-- Internet Gateway (outside VPC) -->
-  <rect x="450" y="25" width="100" height="40" rx="5" fill="#232f3e" filter="url(#shadow)" />
-  <text x="500" y="50" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">Internet</text>
+    /* Card Styles */
+    .card { fill: #ffffff; stroke: #e2e8f0; stroke-width: 1; rx: 8; }
+    .card-title { font-size: 12px; font-weight: 700; fill: #1e293b; }
+    .card-subtitle { font-size: 10px; fill: #64748b; font-family: monospace; }
+    
+    /* Connections */
+    .flow-line { stroke: #64748b; stroke-width: 2; fill: none; stroke-linecap: round; }
+    .flow-line-blue { stroke: #3b82f6; stroke-width: 2; fill: none; stroke-linecap: round; }
+    .flow-line-green { stroke: #10b981; stroke-width: 2; fill: none; stroke-linecap: round; }
+    .flow-line-dash { stroke: #94a3b8; stroke-width: 1.5; fill: none; stroke-dasharray: 4 4; }
+    .port-badge { fill: #f1f5f9; stroke: #cbd5e1; stroke-width: 1; rx: 4; }
+    .port-text { font-size: 10px; font-weight: 700; fill: #475569; text-anchor: middle; font-family: monospace; }
+  </style>
 
-  <!-- VPC Boundary -->
-  <rect x="40" y="90" width="920" height="730" rx="10" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="5 5" />
-  <text x="60" y="115" font-family="Segoe UI, sans-serif" font-size="14" font-weight="bold" fill="#475569">VPC (10.0.0.0/16)</text>
+  <!-- Background Canvas -->
+  <rect width="100%" height="100%" fill="#f8fafc" />
+  <rect width="100%" height="100%" fill="url(#grid)" />
 
-  <!-- AZ Columns (Clean Separations) -->
-  <!-- AZ-A Column -->
-  <line x1="330" y1="130" x2="330" y2="800" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4 4" />
-  <text x="60" y="145" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#94a3b8">AZ-A (ap-northeast-1a)</text>
+  <g class="font-all">
+    <!-- Header -->
+    <text x="40" y="45" class="title-main">FISC-Compliant AWS EKS 3-Tier Architecture</text>
+    <text x="40" y="65" class="title-sub">Terraform Project: learning-terraform-concepts (WAFv2 + ALB + EKS + Aurora Serverless v2 + ElastiCache Redis)</text>
 
-  <!-- AZ-B Column -->
-  <line x1="650" y1="130" x2="650" y2="800" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4 4" />
-  <text x="350" y="145" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#94a3b8">AZ-B (ap-northeast-1c)</text>
+    <!-- Legend (Top Right) -->
+    <g transform="translate(1070, 20)">
+      <rect x="0" y="0" width="310" height="40" fill="#ffffff" stroke="#e2e8f0" rx="6" filter="url(#shadow)" />
+      
+      <circle cx="20" cy="20" r="6" fill="#f59e0b" />
+      <text x="32" y="24" font-size="11" font-weight="600" fill="#1e293b">Public</text>
 
-  <!-- AZ-C Column -->
-  <text x="670" y="145" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#94a3b8">AZ-C (ap-northeast-1d)</text>
+      <circle cx="100" cy="20" r="6" fill="#3b82f6" />
+      <text x="112" y="24" font-size="11" font-weight="600" fill="#1e293b">Private</text>
 
-  <!-- 1. Public Subnets Layer -->
-  <rect x="50" y="165" width="900" height="150" rx="8" fill="url(#publicGrad)" stroke="#93c5fd" stroke-width="1.5" />
-  <text x="65" y="190" font-family="Segoe UI, sans-serif" font-size="13" font-weight="bold" fill="#1d4ed8">Public Subnets</text>
+      <circle cx="180" cy="20" r="6" fill="#10b981" />
+      <text x="192" y="24" font-size="11" font-weight="600" fill="#1e293b">Isolated (DB/Cache)</text>
+    </g>
 
-  <!-- Public Components -->
-  <!-- WAFv2 -->
-  <rect x="440" y="180" width="120" height="40" rx="6" fill="#dd344c" filter="url(#shadow)" />
-  <text x="500" y="205" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">AWS WAFv2</text>
+    <!-- ==================== OUTER SYSTEMS (EDGE) ==================== -->
+    <!-- 1. Internet Client -->
+    <g transform="translate(30, 90)" filter="url(#shadow)">
+      <rect width="110" height="90" class="card" />
+      <path d="M 55 25 C 48 25, 43 30, 43 36 C 37 37, 33 42, 33 48 C 33 54, 38 59, 44 59 L 76 59 C 81 59, 86 54, 86 48 C 86 43, 82 38, 77 37 C 76 30, 70 25, 63 25 C 60 25, 57 26, 55 28 Z" fill="#94a3b8" />
+      <text x="55" y="75" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">Internet</text>
+    </g>
 
-  <!-- ALB -->
-  <rect x="440" y="250" width="120" height="40" rx="6" fill="#8c4fff" filter="url(#shadow)" />
-  <text x="500" y="275" font-family="Segoe UI, sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">Application Load Balancer</text>
-
-  <!-- Single NAT Gateway 1 (AZ-A only, dev environment) -->
-  <rect x="120" y="220" width="120" height="45" rx="6" fill="#0284c7" filter="url(#shadow)" />
-  <text x="180" y="240" font-family="Segoe UI, sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">NAT Gateway 1</text>
-  <text x="180" y="255" font-family="Segoe UI, sans-serif" font-size="9" fill="#e0f2fe" text-anchor="middle">(Outbound Only)</text>
-
-
-  <!-- 2. Private Subnets Layer -->
-  <rect x="50" y="340" width="900" height="200" rx="8" fill="url(#privateGrad)" stroke="#86efac" stroke-width="1.5" />
-  <text x="65" y="365" font-family="Segoe UI, sans-serif" font-size="13" font-weight="bold" fill="#15803d">Private Subnets (EKS Layer)</text>
-
-  <!-- EKS Cluster logical group -->
-  <rect x="80" y="380" width="600" height="140" rx="6" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="3 3" />
-  <text x="95" y="405" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#16a34a">EKS Node Group</text>
-
-  <!-- EKS Nodes (1 Node per AZ, spaced out) -->
-  <rect x="120" y="420" width="120" height="40" rx="6" fill="#3b82f6" filter="url(#shadow)" />
-  <text x="180" y="445" font-family="Segoe UI, sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">EKS Node (AZ-A)</text>
-
-  <rect x="360" y="420" width="120" height="40" rx="6" fill="#3b82f6" filter="url(#shadow)" />
-  <text x="420" y="445" font-family="Segoe UI, sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">EKS Node (AZ-B)</text>
-
-  <rect x="530" y="420" width="120" height="40" rx="6" fill="#3b82f6" filter="url(#shadow)" />
-  <text x="590" y="445" font-family="Segoe UI, sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">EKS Node (AZ-C)</text>
-
-  <!-- VPC Endpoints (PrivateLink) -->
-  <rect x="710" y="380" width="210" height="140" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
-  <text x="725" y="405" font-family="Segoe UI, sans-serif" font-size="12" font-weight="bold" fill="#475569">VPC Endpoints (PrivateLink)</text>
-  <text x="735" y="435" font-family="Segoe UI, sans-serif" font-size="11" fill="#64748b">■ ECR (api/dkr) - Interface</text>
-  <text x="735" y="455" font-family="Segoe UI, sans-serif" font-size="11" fill="#64748b">■ STS / Logs - Interface</text>
-  <text x="735" y="475" font-family="Segoe UI, sans-serif" font-size="11" fill="#64748b">■ S3 - Gateway</text>
-  <text x="735" y="495" font-family="Segoe UI, sans-serif" font-size="10" font-weight="bold" fill="#15803d">✓ Zero Internet Routing</text>
-
-
-  <!-- 3. Isolated Subnets Layer -->
-  <rect x="50" y="565" width="900" height="230" rx="8" fill="url(#isolatedGrad)" stroke="#fdbb2d" stroke-width="1.5" />
-  <text x="65" y="590" font-family="Segoe UI, sans-serif" font-size="13" font-weight="bold" fill="#c2410c">Isolated Subnets (Database Layer)</text>
-  <text x="65" y="610" font-family="Segoe UI, sans-serif" font-size="10" fill="#ea580c">⚠️ FISC Compliant: Strict No-Egress (Outbound Completely Blocked)</text>
-
-  <!-- Aurora PostgreSQL Serverless v2 Instances (No horizontal connection arrows) -->
-  <!-- AZ-A Aurora -->
-  <rect x="120" y="630" width="140" height="50" rx="6" fill="#ea580c" filter="url(#shadow)" />
-  <text x="190" y="650" font-family="Segoe UI, sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">Aurora PostgreSQL</text>
-  <text x="190" y="665" font-family="Segoe UI, sans-serif" font-size="9" fill="#ffedd5" text-anchor="middle">Instance 1 (AZ-A)</text>
-
-  <!-- AZ-B Aurora -->
-  <rect x="360" y="630" width="140" height="50" rx="6" fill="#ea580c" filter="url(#shadow)" />
-  <text x="430" y="650" font-family="Segoe UI, sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">Aurora PostgreSQL</text>
-  <text x="430" y="665" font-family="Segoe UI, sans-serif" font-size="9" fill="#ffedd5" text-anchor="middle">Instance 2 (AZ-B)</text>
-
-  <!-- AZ-C Aurora -->
-  <rect x="530" y="630" width="140" height="50" rx="6" fill="#ea580c" filter="url(#shadow)" />
-  <text x="600" y="650" font-family="Segoe UI, sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">Aurora PostgreSQL</text>
-  <text x="600" y="665" font-family="Segoe UI, sans-serif" font-size="9" fill="#ffedd5" text-anchor="middle">Instance 3 (AZ-C)</text>
-
-  <!-- ElastiCache Redis replication nodes (One single Redis instance per AZ, no duplicates, no horizontal arrows) -->
-  <!-- AZ-A Redis -->
-  <rect x="120" y="715" width="140" height="50" rx="6" fill="#dc2626" filter="url(#shadow)" />
-  <text x="190" y="738" font-family="Segoe UI, sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">ElastiCache Redis</text>
-  <text x="190" y="753" font-family="Segoe UI, sans-serif" font-size="9" fill="#fee2e2" text-anchor="middle">Node 1 (AZ-A)</text>
-
-  <!-- AZ-B Redis -->
-  <rect x="360" y="715" width="140" height="50" rx="6" fill="#dc2626" filter="url(#shadow)" />
-  <text x="430" y="738" font-family="Segoe UI, sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">ElastiCache Redis</text>
-  <text x="430" y="753" font-family="Segoe UI, sans-serif" font-size="9" fill="#fee2e2" text-anchor="middle">Node 2 (AZ-B)</text>
-
-  <!-- AZ-C Redis -->
-  <rect x="530" y="715" width="140" height="50" rx="6" fill="#dc2626" filter="url(#shadow)" />
-  <text x="600" y="738" font-family="Segoe UI, sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">ElastiCache Redis</text>
-  <text x="600" y="753" font-family="Segoe UI, sans-serif" font-size="9" fill="#fee2e2" text-anchor="middle">Node 3 (AZ-C)</text>
+    <!-- 2. Amazon Route 53 (DNS) -->
+    <g transform="translate(30, 220)" filter="url(#shadow)">
+      <rect width="110" height="90" class="card" style="stroke: #ef4444; stroke-width: 1.5;" />
+      <circle cx="55" cy="40" r="16" fill="#ef4444" opacity="0.2" />
+      <path d="M 45 40 L 65 40 M 55 30 L 55 50" stroke="#ef4444" stroke-width="2" stroke-linecap="round" fill="none" />
+      <path d="M 48 33 L 62 47" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" fill="none" />
+      <text x="55" y="75" text-anchor="middle" font-size="11" font-weight="700" fill="#991b1b">Route 53 (DNS)</text>
+    </g>
 
 
-  <!-- Connections -->
+    <!-- ==================== REGIONAL VPC ==================== -->
+    <g transform="translate(340, 80)">
+      <rect width="750" height="720" class="vpc-box" />
+      <text x="20" y="28" class="vpc-label">VPC (10.0.0.0/16)</text>
+      
+      <!-- Internet Gateway on VPC Border -->
+      <g transform="translate(-18, 172)" filter="url(#shadow)">
+        <circle cx="18" cy="18" r="18" fill="#3b82f6" />
+        <path d="M 10 18 L 26 18 M 18 10 L 18 26 M 13 13 L 23 23 M 13 23 L 23 13" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+        <text x="42" y="22" font-size="10" font-weight="700" fill="#1d4ed8">IGW</text>
+      </g>
 
-  <!-- Inbound Traffic: Internet -> WAFv2 -> ALB -->
-  <path d="M 500 65 L 500 180" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" />
-  <path d="M 500 220 L 500 250" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" />
+      <!-- S3 Gateway Endpoint on VPC Border -->
+      <g transform="translate(742, 595)" filter="url(#shadow)">
+        <circle cx="18" cy="18" r="18" fill="#15803d" />
+        <path d="M 10 18 L 26 18 M 20 12 L 26 18 L 20 24" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none" />
+        <text x="18" y="-12" font-size="9" font-weight="700" fill="#166534" text-anchor="middle">S3 Endpoint</text>
+        <text x="18" y="-2" font-size="8" fill="#166534" text-anchor="middle">(Gateway)</text>
+      </g>
 
-  <!-- ALB -> EKS Nodes Parallel Routing -->
-  <path d="M 500 290 L 500 320 L 180 320 L 180 420" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-blue)" />
-  <path d="M 500 290 L 500 420" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-blue)" />
-  <path d="M 500 290 L 500 320 L 590 320 L 590 420" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-blue)" />
+      <!-- AZ Columns Boundaries (Dashed Lines) -->
+      <line x1="242" y1="45" x2="242" y2="700" class="az-line" />
+      <line x1="488" y1="45" x2="488" y2="700" class="az-line" />
 
-  <!-- Outbound Route: EKS Node (AZ-A) -> NAT Gateway 1 -> Internet -->
-  <path d="M 180 420 L 180 265" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="4 2" marker-end="url(#arrow)" />
-  <path d="M 180 220 L 180 130 L 450 130 L 450 65" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="4 2" marker-end="url(#arrow)" />
+      <!-- AZ Labels (Left-Aligned) -->
+      <text x="15" y="45" class="az-label">AZ-A (ap-northeast-1a)</text>
+      <text x="260" y="45" class="az-label">AZ-B (ap-northeast-1c)</text>
+      <text x="505" y="45" class="az-label">AZ-C (ap-northeast-1d)</text>
 
-  <!-- Parallel EKS -> DB / Cache Connections (One-way arrows from EKS to each resource) -->
-  <!-- AZ-A connections -->
-  <path d="M 180 460 L 180 630" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" />
-  <path d="M 180 460 L 180 540 L 105 540 L 105 740 L 120 740" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" />
+      <!-- ==================== SUBNET LAYER 1: PUBLIC ==================== -->
+      <!-- Subnet A - Public -->
+      <g transform="translate(15, 60)">
+        <rect width="220" height="145" class="subnet-public" />
+        <text x="10" y="18" class="subnet-title pub">Public Subnet A</text>
+        
+        <!-- NAT Gateway (Single NAT GW, dev environment) -->
+        <g transform="translate(15, 38)" filter="url(#shadow)">
+          <rect width="190" height="85" class="card" />
+          <circle cx="28" cy="43" r="14" fill="#f59e0b" opacity="0.2" />
+          <path d="M 22 43 L 34 43 M 28 37 L 28 49 M 24 39 L 32 47" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" fill="none" />
+          <text x="52" y="44" class="card-title">NAT Gateway 1</text>
+          <text x="52" y="62" font-size="9" fill="#64748b">Outbound Traffic Only</text>
+        </g>
+      </g>
 
-  <!-- AZ-B connections -->
-  <path d="M 420 460 L 420 630" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" />
-  <path d="M 420 460 L 420 545 L 345 545 L 345 740 L 360 740" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" />
+      <!-- Subnet B - Public -->
+      <g transform="translate(250, 60)">
+        <rect width="230" height="145" class="subnet-public" />
+        <text x="10" y="18" class="subnet-title pub">Public Subnet B</text>
 
-  <!-- AZ-C connections -->
-  <path d="M 590 460 L 590 630" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" />
-  <path d="M 590 460 L 590 550 L 515 550 L 515 740 L 530 740" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" />
+        <!-- ALB + WAF WebACL Protected Group -->
+        <g transform="translate(15, 38)" filter="url(#shadow)">
+          <rect width="200" height="85" class="card" style="stroke: #ef4444; stroke-width: 1.5;" />
+          <!-- WAF Shield Icon -->
+          <circle cx="28" cy="42" r="14" fill="#ef4444" opacity="0.15" />
+          <path d="M 28 32 C 28 32, 35 34, 35 39 C 35 45, 28 49, 28 49 C 28 49, 21 45, 21 39 C 21 34, 28 32, 28 32 Z" fill="#ef4444" />
+          <text x="52" y="32" class="card-title" fill="#b91c1c">AWS WAFv2 (WebACL)</text>
+          <text x="52" y="46" font-size="9" font-weight="600" fill="#991b1b">Custom 503 Maintenance</text>
+          <line x1="52" y1="52" x2="190" y2="52" stroke="#fecaca" stroke-width="1" />
+          
+          <!-- ALB Info inside the same card -->
+          <text x="52" y="66" class="card-title" font-size="11">App Load Balancer</text>
+          <text x="52" y="78" class="card-subtitle" font-size="9">ApplicationLoadBalancer</text>
+        </g>
+      </g>
 
-  <!-- Private EKS Nodes -> VPC Endpoints -->
-  <path d="M 680 450 L 710 450" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" />
+      <!-- Subnet C - Public -->
+      <g transform="translate(495, 60)">
+        <rect width="240" height="145" class="subnet-public" />
+        <text x="10" y="18" class="subnet-title pub">Public Subnet C</text>
+        <text x="120" y="80" text-anchor="middle" font-size="10" fill="#d97706" font-style="italic">Spare Capacity</text>
+      </g>
 
+
+      <!-- ==================== SUBNET LAYER 2: PRIVATE ==================== -->
+      <!-- Subnet A - Private -->
+      <g transform="translate(15, 225)">
+        <rect width="220" height="160" class="subnet-private" />
+        <text x="10" y="18" class="subnet-title priv">Private Subnet A</text>
+
+        <!-- EKS Node A -->
+        <g transform="translate(15, 35)" filter="url(#shadow)">
+          <rect width="190" height="110" class="card" />
+          <circle cx="28" cy="48" r="14" fill="#3b82f6" opacity="0.2" />
+          <rect x="21" y="41" width="14" height="14" rx="2" fill="none" stroke="#3b82f6" stroke-width="2" />
+          <circle cx="28" cy="48" r="3" fill="#3b82f6" />
+          <text x="52" y="30" class="card-title">EKS Worker Node</text>
+          <text x="52" y="44" class="card-subtitle">NodePort / kube-proxy</text>
+          <text x="52" y="56" class="card-subtitle">Instance: t3.medium</text>
+          <text x="52" y="68" class="card-subtitle" fill="#64748b">CNI: AWS VPC CNI</text>
+          <text x="52" y="90" font-size="9" fill="#3b82f6" font-weight="600">Active (AZ-a)</text>
+        </g>
+      </g>
+
+      <!-- Subnet B - Private -->
+      <g transform="translate(250, 225)">
+        <rect width="230" height="160" class="subnet-private" />
+        <text x="10" y="18" class="subnet-title priv">Private Subnet B</text>
+
+        <!-- EKS Node B -->
+        <g transform="translate(15, 35)" filter="url(#shadow)">
+          <rect width="200" height="110" class="card" />
+          <circle cx="28" cy="48" r="14" fill="#3b82f6" opacity="0.2" />
+          <rect x="21" y="41" width="14" height="14" rx="2" fill="none" stroke="#3b82f6" stroke-width="2" />
+          <circle cx="28" cy="48" r="3" fill="#3b82f6" />
+          <text x="52" y="30" class="card-title">EKS Worker Node</text>
+          <text x="52" y="44" class="card-subtitle">NodePort / kube-proxy</text>
+          <text x="52" y="56" class="card-subtitle">Instance: t3.medium</text>
+          <text x="52" y="68" class="card-subtitle" fill="#64748b">CNI: AWS VPC CNI</text>
+          <text x="52" y="90" font-size="9" fill="#3b82f6" font-weight="600">Active (AZ-b)</text>
+        </g>
+      </g>
+
+      <!-- Subnet C - Private -->
+      <g transform="translate(495, 225)">
+        <rect width="240" height="160" class="subnet-private" />
+        <text x="10" y="18" class="subnet-title priv">Private Subnet C</text>
+        <text x="100" y="18" font-size="8.5" font-weight="700" fill="#2563eb">🔄 Managed Scaling</text>
+
+        <!-- EKS Node C -->
+        <g transform="translate(20, 35)" filter="url(#shadow)">
+          <rect width="200" height="110" class="card" />
+          <circle cx="28" cy="48" r="14" fill="#3b82f6" opacity="0.2" />
+          <rect x="21" y="41" width="14" height="14" rx="2" fill="none" stroke="#3b82f6" stroke-width="2" />
+          <circle cx="28" cy="48" r="3" fill="#3b82f6" />
+          <text x="52" y="30" class="card-title">EKS Worker Node</text>
+          <text x="52" y="44" class="card-subtitle">NodePort / kube-proxy</text>
+          <text x="52" y="56" class="card-subtitle">Instance: t3.medium</text>
+          <text x="52" y="68" class="card-subtitle" fill="#64748b">CNI: AWS VPC CNI</text>
+          <text x="52" y="90" font-size="9" fill="#3b82f6" font-weight="600">Active (AZ-c)</text>
+        </g>
+      </g>
+
+
+      <!-- ==================== SUBNET LAYER 3: ISOLATED ==================== -->
+      <!-- Subnet A - Isolated -->
+      <g transform="translate(15, 400)">
+        <rect width="220" height="300" class="subnet-isolated" />
+        <text x="10" y="18" class="subnet-title iso">Isolated Subnet A</text>
+
+        <!-- Aurora Writer -->
+        <g transform="translate(15, 30)" filter="url(#shadow)">
+          <rect width="190" height="95" class="card" style="stroke: #10b981; stroke-width: 1.5;" />
+          <circle cx="28" cy="48" r="14" fill="#10b981" opacity="0.2" />
+          <path d="M 20 40 C 20 37, 36 37, 36 40 L 36 56 C 36 59, 20 59, 20 56 Z M 20 45 C 20 48, 36 48, 36 45 M 20 50 C 20 53, 36 53, 36 50" stroke="#10b981" stroke-width="2" stroke-linecap="round" fill="none" />
+          <text x="52" y="34" class="card-title" fill="#047857">Aurora DB (Writer)</text>
+          <text x="52" y="48" class="card-subtitle" fill="#065f46">Serverless v2 Primary</text>
+          <text x="52" y="60" class="card-subtitle">Port: 5432 (Postgres)</text>
+          <text x="52" y="76" font-size="9" font-weight="600" fill="#059669">Primary Node (AZ-a)</text>
+        </g>
+
+        <!-- Redis Node 1 -->
+        <g transform="translate(15, 140)" filter="url(#shadow)">
+          <rect width="190" height="95" class="card" style="stroke: #e11d48; stroke-width: 1.5;" />
+          <circle cx="28" cy="48" r="14" fill="#e11d48" opacity="0.15" />
+          <rect x="20" y="39" width="16" height="5" rx="1" fill="#e11d48" />
+          <rect x="20" y="46" width="16" height="5" rx="1" fill="#e11d48" />
+          <rect x="20" y="53" width="16" height="5" rx="1" fill="#e11d48" />
+          <text x="52" y="34" class="card-title" fill="#be123c">ElastiCache Redis</text>
+          <text x="52" y="48" class="card-subtitle">Cache Replication Group</text>
+          <text x="52" y="60" class="card-subtitle">Port: 6379 (Redis)</text>
+          <text x="52" y="76" font-size="9" font-weight="600" fill="#be123c">Node 1 (AZ-a)</text>
+        </g>
+      </g>
+
+      <!-- Subnet B - Isolated -->
+      <g transform="translate(250, 400)">
+        <rect width="230" height="300" class="subnet-isolated" />
+        <text x="10" y="18" class="subnet-title iso">Isolated Subnet B</text>
+
+        <!-- Aurora Reader -->
+        <g transform="translate(15, 30)" filter="url(#shadow)">
+          <rect width="200" height="95" class="card" style="stroke: #10b981; stroke-width: 1.5; stroke-dasharray: 3 3;" />
+          <circle cx="28" cy="48" r="14" fill="#10b981" opacity="0.2" />
+          <path d="M 20 40 C 20 37, 36 37, 36 40 L 36 56 C 36 59, 20 59, 20 56 Z M 20 45 C 20 48, 36 48, 36 45 M 20 50 C 20 53, 36 53, 36 50" stroke="#10b981" stroke-width="2" stroke-linecap="round" fill="none" />
+          <text x="52" y="34" class="card-title" fill="#047857">Aurora DB (Reader)</text>
+          <text x="52" y="48" class="card-subtitle">Serverless v2 Replica</text>
+          <text x="52" y="60" class="card-subtitle">Port: 5432 (Postgres)</text>
+          <text x="52" y="76" font-size="9" font-weight="600" fill="#059669">Reader (prod/stg only)</text>
+        </g>
+
+        <!-- Redis Node 2 -->
+        <g transform="translate(15, 140)" filter="url(#shadow)">
+          <rect width="200" height="95" class="card" style="stroke: #e11d48; stroke-width: 1.5; stroke-dasharray: 3 3;" />
+          <circle cx="28" cy="48" r="14" fill="#e11d48" opacity="0.15" />
+          <rect x="20" y="39" width="16" height="5" rx="1" fill="#e11d48" />
+          <rect x="20" y="46" width="16" height="5" rx="1" fill="#e11d48" />
+          <rect x="20" y="53" width="16" height="5" rx="1" fill="#e11d48" />
+          <text x="52" y="34" class="card-title" fill="#be123c">ElastiCache Redis</text>
+          <text x="52" y="48" class="card-subtitle">Replica (prod/stg only)</text>
+          <text x="52" y="60" class="card-subtitle">Port: 6379 (Redis)</text>
+          <text x="52" y="76" font-size="9" font-weight="600" fill="#be123c">Node 2 (AZ-b)</text>
+        </g>
+      </g>
+
+      <!-- Subnet C - Isolated -->
+      <g transform="translate(495, 400)">
+        <rect width="240" height="300" class="subnet-isolated" />
+        <text x="10" y="18" class="subnet-title iso">Isolated Subnet C</text>
+        <text x="100" y="18" font-size="8.5" font-weight="700" fill="#059669">🛡️ Prod DB Protection</text>
+
+        <!-- Aurora Reader -->
+        <g transform="translate(20, 30)" filter="url(#shadow)">
+          <rect width="200" height="95" class="card" style="stroke: #10b981; stroke-width: 1.5; stroke-dasharray: 3 3;" />
+          <circle cx="28" cy="48" r="14" fill="#10b981" opacity="0.2" />
+          <path d="M 20 40 C 20 37, 36 37, 36 40 L 36 56 C 36 59, 20 59, 20 56 Z M 20 45 C 20 48, 36 48, 36 45 M 20 50 C 20 53, 36 53, 36 50" stroke="#10b981" stroke-width="2" stroke-linecap="round" fill="none" />
+          <text x="52" y="34" class="card-title">Aurora DB (Reader)</text>
+          <text x="52" y="48" class="card-subtitle">Serverless v2 Replica</text>
+          <text x="52" y="60" class="card-subtitle">Port: 5432 (Postgres)</text>
+          <text x="52" y="76" font-size="9" font-weight="600" fill="#059669">Reader (prod/stg only)</text>
+        </g>
+
+        <!-- Redis Node 3 -->
+        <g transform="translate(20, 140)" filter="url(#shadow)">
+          <rect width="200" height="95" class="card" style="stroke: #e11d48; stroke-width: 1.5; stroke-dasharray: 3 3;" />
+          <circle cx="28" cy="48" r="14" fill="#e11d48" opacity="0.15" />
+          <rect x="20" y="39" width="16" height="5" rx="1" fill="#e11d48" />
+          <rect x="20" y="46" width="16" height="5" rx="1" fill="#e11d48" />
+          <rect x="20" y="53" width="16" height="5" rx="1" fill="#e11d48" />
+          <text x="52" y="34" class="card-title" fill="#be123c">ElastiCache Redis</text>
+          <text x="52" y="48" class="card-subtitle">Replica (prod/stg only)</text>
+          <text x="52" y="60" class="card-subtitle">Port: 6379 (Redis)</text>
+          <text x="52" y="76" font-size="9" font-weight="600" fill="#be123c">Node 3 (AZ-c)</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- ==================== FLOW CONNECTIONS (ARROWS) ==================== -->
+    <!-- 1. Route 53 DNS Interaction -->
+    <path d="M 85 180 L 85 220" class="flow-line-dash" marker-end="url(#arrow)" />
+    <path d="M 100 220 L 100 180" class="flow-line-dash" marker-end="url(#arrow)" />
+    <text x="75" y="200" text-anchor="end" font-size="9" fill="#991b1b" font-weight="700">1. DNS Query</text>
+
+    <!-- 2. Internet to ALB (Direct, no CF) -->
+    <path d="M 140 135 L 590 135 L 590 178" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <g transform="translate(174, 115)">
+      <text x="0" y="10" font-size="9" font-weight="700" fill="#1d4ed8">2. User Request (HTTPS :443)</text>
+    </g>
+
+    <!-- 3. ALB to EKS Nodes -->
+    <path d="M 590 263 L 590 315" class="flow-line-blue" />
+    <path d="M 590 315 L 465 315 L 465 340" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 590 315 L 705 315 L 705 340" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 590 315 L 955 315 L 955 340" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+
+    <!-- Port 80/443 Badge on ALB -> EKS lines -->
+    <g transform="translate(775, 305)">
+      <rect width="65" height="18" class="port-badge" />
+      <text x="32.5" y="12" class="port-text">HTTP :80/443</text>
+    </g>
+    <text x="775" y="298" font-size="9" font-weight="700" fill="#1d4ed8">3. Route Traffic</text>
+
+    <!-- 4. EKS Nodes parallel connection to Aurora DB (Isolated Layer) -->
+    <path d="M 465 450 L 465 510" class="flow-line-green" marker-end="url(#arrow-green)" />
+    <path d="M 705 450 L 705 510" class="flow-line-green" marker-end="url(#arrow-green)" />
+    <path d="M 955 450 L 955 510" class="flow-line-green" marker-end="url(#arrow-green)" />
+
+    <!-- Port 5432 Badge on EKS -> Aurora -->
+    <g transform="translate(475, 470)">
+      <rect width="65" height="18" class="port-badge" />
+      <text x="32.5" y="12" class="port-text">Postgres :5432</text>
+    </g>
+    <text x="475" y="465" font-size="9" font-weight="700" fill="#047857">4. Database Query</text>
+
+    <!-- 5. EKS Nodes parallel connection to Redis Cache (Isolated Layer) -->
+    <!-- AZ-A EKS to AZ-A Redis -->
+    <path d="M 450 450 L 450 620" class="flow-line" stroke="#e11d48" stroke-width="2" marker-end="url(#arrow-red)" fill="none" />
+    <!-- AZ-B EKS to AZ-B Redis -->
+    <path d="M 690 450 L 690 620" class="flow-line" stroke="#e11d48" stroke-width="2" marker-end="url(#arrow-red)" fill="none" />
+    <!-- AZ-C EKS to AZ-C Redis -->
+    <path d="M 940 450 L 940 620" class="flow-line" stroke="#e11d48" stroke-width="2" marker-end="url(#arrow-red)" fill="none" />
+
+    <!-- Port 6379 Badge on EKS -> Redis -->
+    <g transform="translate(365, 470)">
+      <rect width="65" height="18" class="port-badge" rx="4" />
+      <text x="32.5" y="12" class="port-text" font-size="9" fill="#be123c">Redis :6379</text>
+    </g>
+    <text x="365" y="465" font-size="9" font-weight="700" fill="#be123c">5. Cache Query</text>
+
+    <!-- 6. EKS Outbound Traffic (Egress) to NAT Gateway -->
+    <!-- Nodes A, B, C -> NAT Gateway 1 -->
+    <path d="M 465 340 L 465 263" class="flow-line-dash" marker-end="url(#arrow)" />
+    <path d="M 705 340 L 705 325 L 465 325 L 465 263" class="flow-line-dash" marker-end="url(#arrow)" />
+    <!-- NAT GW to IGW for Internet access -->
+    <path d="M 370 220.5 L 322 220.5 L 322 135 L 140 135" class="flow-line-dash" marker-end="url(#arrow)" />
+    <text x="350" y="213" font-size="8" font-weight="600" fill="#64748b">Egress to Internet</text>
+
+
+    <!-- ==================== AWS REGION SERVICES ==================== -->
+    <!-- CloudWatch Logs (Region Service) -->
+    <g transform="translate(1120, 80)" filter="url(#shadow)">
+      <rect width="270" height="120" class="card" style="stroke: #3b82f6; stroke-width: 1.5; stroke-dasharray: 4 4;" />
+      <circle cx="28" cy="45" r="14" fill="#3b82f6" opacity="0.15" />
+      <path d="M 20 40 L 36 40 M 20 45 L 36 45 M 20 50 L 30 50" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" fill="none" />
+      <text x="52" y="32" class="card-title" fill="#1d4ed8">Amazon CloudWatch Logs</text>
+      <text x="52" y="48" class="card-subtitle" font-weight="700">Log Group: eks-logs-dev</text>
+      <text x="52" y="60" class="card-subtitle">/aws/eks/cluster-dev</text>
+      
+      <!-- Filter Info badge -->
+      <rect x="52" y="74" width="200" height="34" fill="#eff6ff" rx="4" stroke="#bfdbfe" stroke-width="1" />
+      <text x="60" y="87" font-size="8.5" font-weight="700" fill="#1e40af">EKS Control Plane Audit</text>
+      <text x="60" y="98" font-size="8" fill="#1e40af">Fully Encrypted via KMS CMK</text>
+    </g>
+
+    <!-- VPC Endpoints (PrivateLink) -->
+    <g transform="translate(1120, 225)" filter="url(#shadow)">
+      <rect width="270" height="160" class="card" style="stroke: #10b981; stroke-width: 1.5;" />
+      <circle cx="28" cy="45" r="14" fill="#10b981" opacity="0.15" />
+      <path d="M 20 45 C 20 33, 36 33, 36 45 M 20 45 L 36 45" stroke="#10b981" stroke-width="2" stroke-linecap="round" fill="none" />
+      <text x="52" y="32" class="card-title" fill="#15803d">VPC Endpoints (PrivateLink)</text>
+      <text x="52" y="48" class="card-subtitle" font-weight="700">Interface: ECR / STS / Logs</text>
+      <text x="52" y="60" class="card-subtitle">Gateway: Amazon S3</text>
+      <text x="52" y="72" class="card-subtitle" fill="#64748b">Cross-AZ High Availability</text>
+
+      <rect x="15" y="88" width="240" height="60" fill="#f0fdf4" rx="4" stroke="#bbf7d0" stroke-width="1" />
+      <text x="25" y="103" font-size="9" font-weight="700" fill="#15803d">FISC Compliant Closed-Loop Routing</text>
+      <text x="25" y="118" font-size="8" fill="#166534">EKS pulls registry images and uploads logs</text>
+      <text x="25" y="133" font-size="8" fill="#166534">without traversing the public internet.</text>
+    </g>
+
+    <!-- Amazon S3 (Asset and Log Storage) -->
+    <g transform="translate(1120, 480)" filter="url(#shadow)">
+      <rect width="270" height="110" class="card" style="stroke: #15803d; stroke-width: 1.5;" />
+      <circle cx="28" cy="45" r="14" fill="#15803d" opacity="0.15" />
+      <path d="M 20 38 L 36 38 L 36 54 A 8 8 0 0 1 20 54 Z" fill="none" stroke="#15803d" stroke-width="2" />
+      <path d="M 20 44 L 36 44 M 20 50 L 36 50" stroke="#15803d" stroke-width="1.5" />
+      <text x="52" y="32" class="card-title" fill="#166534">Amazon S3 (Asset &amp; Log Storage)</text>
+      <text x="52" y="48" class="card-subtitle" font-weight="700">Bucket: EKS backup / logs</text>
+      <text x="52" y="60" class="card-subtitle">Private access via VPC Gateway Endpoint</text>
+      <text x="52" y="76" font-size="9" font-weight="600" fill="#15803d">Encrypted via KMS CMK</text>
+    </g>
+
+    <!-- ==================== LOG PIPELINE FLOWS ==================== -->
+    <!-- EKS Nodes to CloudWatch Logs -->
+    <path d="M 560 395 L 1120 140" class="flow-line-dash" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow-blue)" />
+    <path d="M 805 395 L 1120 140" class="flow-line-dash" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow-blue)" />
+    <path d="M 1055 395 L 1120 140" class="flow-line-dash" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow-blue)" />
+
+    <!-- EKS Nodes to S3 via S3 Gateway Endpoint -->
+    <path d="M 1040 450 L 1080 450 L 1080 675 L 1120 675" class="flow-line-dash" stroke="#15803d" stroke-width="1.5" stroke-dasharray="3 3" fill="none" />
+    <path d="M 1082 675 L 1120 675" class="flow-line-green" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" />
+    
+    <!-- EKS Nodes to VPC Endpoints (PrivateLink Interface) -->
+    <path d="M 1055 380 L 1090 380 L 1090 305 L 1120 305" class="flow-line-green" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" fill="none" />
+  </g>
 </svg>
