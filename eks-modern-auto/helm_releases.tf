@@ -54,6 +54,17 @@ resource "helm_release" "cilium" {
     value = "false"
   }
 
+  # Explicitly enable Cilium Operator (Control Plane / Management Pod)
+  set {
+    name  = "operator.enabled"
+    value = "true"
+  }
+
+  set {
+    name  = "operator.replicas"
+    value = "1" # Set to 1 for dev/demo. Recommended to be 2 for production HA.
+  }
+
   # Enable Cilium eBPF Network Policies
   set {
     name  = "enablePolicy"
@@ -215,6 +226,22 @@ resource "helm_release" "datadog" {
   set {
     name  = "datadog.processAgent.processCollection"
     value = "true"
+  }
+
+  # Enable Datadog Cluster Agent (Management / Control Plane Pod)
+  set {
+    name  = "datadog.clusterAgent.enabled"
+    value = "true"
+  }
+
+  set {
+    name  = "clusterAgent.replicas"
+    value = "1" # Set to 1 for dev/demo. Recommended to be 2 for production HA.
+  }
+
+  set {
+    name  = "datadog.clusterAgent.token"
+    value = "secure_cluster_agent_token_for_demo_purposes"
   }
 
   # Autodiscovery for EKS containers and logs

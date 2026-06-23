@@ -160,26 +160,47 @@ terraform validate
 
 ![System Architecture](docs/images/architecture_auto.svg)
 
----
-
 ### ⚙️ 主な設定パラメータ解説（`helm_releases.tf`）
 
 #### Cilium (`cni.chainingMode = "aws-vpc-cni"`)
-VPC CNIとのチェイニングを有効化するためのパラメータです。
+VPC CNIとのチェイニングを有効化するためのパラメータです。また、コントロールプレーンとしての Cilium Operator も明示的にデプロイしています。
 ```hcl
 cni.chainingMode     = "aws-vpc-cni"
 cni.exclusive        = "false"
-enableIPv4Masquerade = "false" # VPC CNIがマスカレードを担当
+enableIPv4Masquerade = "false"    # VPC CNIがマスカレードを担当
 tunnel               = "disabled" # トンネリング（VxLAN/Geneve）を無効化しVPCルーティングを利用
 ipam.mode            = "aws-vpc-cni"
+ipam.operator.enabled = "false"   # IPAMはVPC CNIに委ねる
+operator.enabled     = "true"     # 司令塔(Operator)を明示的に有効化
+operator.replicas    = "1"        # デモ用（本番はHAを考慮し2推奨）
 ```
 
 #### Istio Ambient Mesh (`profile = "ambient"`)
-Ambient Meshを有効にするため、CRD、CNIプラグイン、コントロールプレーン、データプレーン（ztunnel）をそれぞれデプロイします。
+Ambient Meshを有効にするため、CRD、CNIプラグイン、コントロールプレーン（`istiod`）、データプレーン（ztunnel）をそれぞれデプロイします。
 * `istio-cni` が各ノードのネットワーク名前空間を監視し、アプリケーションのパケットを自動的かつ安全に `ztunnel` へリダイレクト（リダイレクション）します。
+* L7制御を行うには、Kubernetes Gateway API を有効化し、Waypoint Proxy（L7司令塔プロキシ）をデプロイする必要があります。
 
 #### Datadog (`agents.useHostNetwork = true`)
-CNIチェイニングおよびサービスメッシュが初期化されるよりも先に、ノードのホストネットワークにバインドして確実に起動し、メトリクスのドロップを防ぐ実務的（本番考慮）なパラメータです。
+CNIチェイニングおよびサービスメッシュが初期化されるよりも先に、ノードのホストネットワークにバインドして確実に起動し、メトリクスのドロップを防ぐ実務的（本番考慮）なパラメータです。また、クラスタ管理を担う Cluster Agent も明示的にデプロイしています。
+```hcl
+datadog.clusterAgent.enabled = "true"  # 司令塔(Cluster Agent)を明示的に有効化
+clusterAgent.replicas        = "1"     # 本番は2推奨
+```
+
+---
+
+### 🛡️ EKS 司令塔 Pod（Control Plane & Operators）の重要性と役割
+
+各ノードで動作する DaemonSet（Cilium、ztunnel、Datadog Agent）を統治し、クラスタ全体の同期や管理を担う **「司令塔（Control Plane / Operator / Waypoint）」** Pod が配置されています（詳細はトポロジー構成図を参照）。
+
+1. **`istiod` (Istio Control Plane)**
+   * **役割**: サービスメッシュ全体の司令塔。証明書 (CA) の発行や mTLS のセキュリティポリシー、`ztunnel` に対するルーティング設定 (xDS) の配信を集中管理します。
+2. **`cilium-operator` (Cilium Operator)**
+   * **役割**: Cilium 特有のカスタムリソース (CRD) のガベージコレクションや、Kubernetes サービスとの同期を司ります。IPAM（IPアドレス管理）は VPC CNI に委ねているため、`ipam.operator.enabled = false` に抑えつつ、その他のコントロールプレーン機能を安全に提供します。
+3. **`datadog-cluster-agent` (Datadog Cluster Agent)**
+   * **役割**: 各ノードの Datadog Agent と Kubernetes API サーバーの間のクッションとして機能します。API サーバーへの負荷集中を防ぎ、クラスタ全体のカスタムメトリクスを安全に収集します。
+4. **`Waypoint Proxy` (Envoy / L7 Gateway)**
+   * **役割**: Istio Ambient Mesh において L7 (HTTP / TLS レベル) の高度なルーティングやセキュリティ制御を行うためのプロキシです。必要に応じて Namespace 単位等でデプロイされ、L4 制御のみを行う ztunnel と協調します。
 
 ---
 

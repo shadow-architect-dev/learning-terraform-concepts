@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1420" height="830" viewBox="0 0 1420 830">
+<svg xmlns="http://www.w3.org/2000/svg" width="1420" height="930" viewBox="0 0 1420 930">
   <defs>
     <!-- Background grid -->
     <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -96,7 +96,7 @@
 
     <!-- ==================== REGIONAL VPC ==================== -->
     <g transform="translate(340, 80)">
-      <rect width="750" height="720" class="vpc-box" />
+      <rect width="750" height="820" class="vpc-box" />
       <text x="20" y="28" class="vpc-label">VPC (10.10.0.0/16)</text>
       
       <!-- Internet Gateway on VPC Border -->
@@ -107,7 +107,7 @@
       </g>
 
       <!-- S3 Gateway Endpoint on VPC Border -->
-      <g transform="translate(742, 595)" filter="url(#shadow)">
+      <g transform="translate(742, 695)" filter="url(#shadow)">
         <circle cx="18" cy="18" r="18" fill="#15803d" />
         <path d="M 10 18 L 26 18 M 20 12 L 26 18 L 20 24" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none" />
         <text x="18" y="-12" font-size="9" font-weight="700" fill="#166534" text-anchor="middle">S3 Endpoint</text>
@@ -115,8 +115,8 @@
       </g>
 
       <!-- AZ Columns Boundaries (Dashed Lines) -->
-      <line x1="242" y1="45" x2="242" y2="700" class="az-line" />
-      <line x1="488" y1="45" x2="488" y2="700" class="az-line" />
+      <line x1="242" y1="45" x2="242" y2="800" class="az-line" />
+      <line x1="488" y1="45" x2="488" y2="800" class="az-line" />
 
       <!-- AZ Labels (Left-Aligned) -->
       <text x="15" y="45" class="az-label">AZ-A (ap-northeast-1a)</text>
@@ -152,14 +152,11 @@
         </g>
       </g>
 
-
       <!-- ==================== SUBNET LAYER 2: PRIVATE (EKS + Karpenter Nodes) ==================== -->
       <g transform="translate(15, 225)">
-        <rect width="720" height="475" class="subnet-private" />
+        <rect width="720" height="575" class="subnet-private" />
         <text x="10" y="18" class="subnet-title priv">Private Subnets (EKS Auto Mode &amp; Service Mesh Layer)</text>
 
-        <!-- EKS Managed Karpenter Nodes -->
-        
         <!-- Karpenter Node A (AZ-A) -->
         <g transform="translate(15, 35)">
           <rect width="210" height="420" rx="10" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)" />
@@ -268,6 +265,7 @@
           <!-- Datadog Agent (NPM eBPF DaemonSet) -->
           <g transform="translate(15, 200)" filter="url(#shadow)">
             <rect width="180" height="60" class="card" style="stroke: #3b82f6; stroke-width: 1.2;" />
+            <circle cx="20" cy="30" r="10" fill="#3b82f6" opacity="0.15" />
             <text x="40" y="28" class="card-title" fill="#1d4ed8">Datadog Agent</text>
             <text x="40" y="44" class="card-subtitle">HostNetwork = true</text>
           </g>
@@ -282,6 +280,44 @@
 
             <rect x="15" y="72" width="150" height="32" rx="4" fill="#f0fdf4" stroke="#86efac" />
             <text x="25" y="92" font-size="11" font-weight="700" fill="#15803d">App Pod B-3</text>
+          </g>
+        </g>
+
+        <!-- EKS System Operators & Control Plane (Deployments) -->
+        <g transform="translate(15, 475)">
+          <rect width="690" height="85" rx="8" fill="#f8fafc" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3 3" />
+          <text x="15" y="20" font-size="10.5" font-weight="700" fill="#1e3a8a">EKS System Control Plane &amp; Operators (Deployments)</text>
+          
+          <!-- istiod -->
+          <g transform="translate(15, 30)" filter="url(#shadow)">
+            <rect width="150" height="42" class="card" style="stroke: #ef4444; stroke-width: 1.2;" />
+            <circle cx="15" cy="21" r="8" fill="#ef4444" opacity="0.15" />
+            <text x="30" y="20" class="card-title" font-size="10" fill="#be123c">istiod (Control Plane)</text>
+            <text x="30" y="32" class="card-subtitle" font-size="8">Mesh Config &amp; CA</text>
+          </g>
+
+          <!-- cilium-operator -->
+          <g transform="translate(180, 30)" filter="url(#shadow)">
+            <rect width="150" height="42" class="card" style="stroke: #10b981; stroke-width: 1.2;" />
+            <circle cx="15" cy="21" r="8" fill="#10b981" opacity="0.15" />
+            <text x="30" y="20" class="card-title" font-size="10" fill="#047857">cilium-operator</text>
+            <text x="30" y="32" class="card-subtitle" font-size="8">Policy Sync &amp; CRD GC</text>
+          </g>
+
+          <!-- datadog-cluster-agent -->
+          <g transform="translate(345, 30)" filter="url(#shadow)">
+            <rect width="160" height="42" class="card" style="stroke: #3b82f6; stroke-width: 1.2;" />
+            <circle cx="15" cy="21" r="8" fill="#3b82f6" opacity="0.15" />
+            <text x="30" y="20" class="card-title" font-size="9.5" fill="#1d4ed8">datadog-cluster-agent</text>
+            <text x="30" y="32" class="card-subtitle" font-size="8">Cluster Metrics &amp; API Load</text>
+          </g>
+
+          <!-- Waypoint Proxy (Envoy) -->
+          <g transform="translate(520, 30)" filter="url(#shadow)">
+            <rect width="155" height="42" class="card" style="stroke: #f59e0b; stroke-width: 1.2;" />
+            <circle cx="15" cy="21" r="8" fill="#f59e0b" opacity="0.15" />
+            <text x="30" y="20" class="card-title" font-size="10" fill="#d97706">Waypoint Proxy (Envoy)</text>
+            <text x="30" y="32" class="card-subtitle" font-size="8">Ambient Mesh L7 Control</text>
           </g>
         </g>
       </g>
@@ -371,8 +407,8 @@
     <path d="M 1055 395 L 1120 140" class="flow-line-dash" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow-blue)" />
 
     <!-- EKS Nodes to S3 via S3 Gateway Endpoint -->
-    <path d="M 1040 450 L 1080 450 L 1080 675 L 1120 675" class="flow-line-dash" stroke="#15803d" stroke-width="1.5" stroke-dasharray="3 3" fill="none" />
-    <path d="M 1082 675 L 1120 675" class="flow-line-green" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" />
+    <path d="M 1040 450 L 1080 450 L 1080 775 L 1120 775" class="flow-line-dash" stroke="#15803d" stroke-width="1.5" stroke-dasharray="3 3" fill="none" />
+    <path d="M 1082 775 L 1120 775" class="flow-line-green" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" />
     
     <!-- EKS Nodes to VPC Endpoints (PrivateLink Interface) -->
     <path d="M 1055 380 L 1090 380 L 1090 305 L 1120 305" class="flow-line-green" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" fill="none" />
