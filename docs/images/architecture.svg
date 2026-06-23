@@ -334,7 +334,7 @@
     <text x="75" y="200" text-anchor="end" font-size="9" fill="#991b1b" font-weight="700">1. DNS Query</text>
 
     <!-- 2. Internet to ALB (Direct, no CF) -->
-    <path d="M 140 135 L 590 135 L 590 178" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 140 135 L 705 135 L 705 178" class="flow-line-blue" marker-end="url(#arrow-blue)" />
     <g transform="translate(174, 115)">
       <text x="0" y="10" font-size="9" font-weight="700" fill="#1d4ed8">2. User Request (HTTPS :443)</text>
     </g>
@@ -384,7 +384,7 @@
     <path d="M 465 340 L 465 263" class="flow-line-dash" marker-end="url(#arrow)" />
     <path d="M 705 340 L 705 325 L 465 325 L 465 263" class="flow-line-dash" marker-end="url(#arrow)" />
     <!-- NAT GW to IGW for Internet access -->
-    <path d="M 370 220.5 L 322 220.5 L 322 135 L 140 135" class="flow-line-dash" marker-end="url(#arrow)" />
+    <path d="M 370 220.5 L 322 220.5 L 322 160 L 140 160" class="flow-line-dash" marker-end="url(#arrow)" />
     <text x="350" y="213" font-size="8" font-weight="600" fill="#64748b">Egress to Internet</text>
 
 
