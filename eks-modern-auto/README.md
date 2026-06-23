@@ -35,10 +35,10 @@
 graph TD
     Internet[インターネット] --> ALB[EKS Managed Load Balancer]
     
-    subgraph EKS_Auto_Mode_Cluster [EKS Auto Mode Cluster]
-        subgraph EC2_Host [Managed EC2 Host (Karpenter)]
-            Cilium[Cilium DaemonSet (eBPF Policy)]
-            Ztunnel[Istio ztunnel DaemonSet (L4 mTLS)]
+    subgraph EKS_Auto_Mode_Cluster ["EKS Auto Mode Cluster"]
+        subgraph EC2_Host ["Managed EC2 Host (Karpenter)"]
+            Cilium["Cilium DaemonSet (eBPF Policy)"]
+            Ztunnel["Istio ztunnel DaemonSet (L4 mTLS)"]
             DD[Datadog Agent DaemonSet]
             
             PodA[App Pod A]
