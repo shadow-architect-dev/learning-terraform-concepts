@@ -8,7 +8,7 @@ FISC安全対策基準に準拠した、セキュアで高可用性な AWS EKS 3
 
 本インフラは、パブリック、プライベート、およびインターネットから完全に分離されたアイソレート（孤立）の3つのレイヤーで構成されています。
 
-![System Architecture](docs/images/architecture_v4.png)
+![System Architecture](docs/images/architecture.svg)
 
 ---
 
