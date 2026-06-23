@@ -330,16 +330,16 @@
     <text x="75" y="200" text-anchor="end" font-size="9" fill="#991b1b" font-weight="700">1. DNS Query</text>
 
     <!-- 2. Internet to ALB (Direct) -->
-    <path d="M 140 135 L 675 135 L 675 178" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 140 135 L 925 135 L 925 178" class="flow-line-blue" marker-end="url(#arrow-blue)" />
     <g transform="translate(174, 115)">
       <text x="0" y="10" font-size="9" font-weight="700" fill="#1d4ed8">2. User Request (HTTPS :443)</text>
     </g>
 
     <!-- 3. ALB to EKS Node Pods (IP routing via VPC CNI) -->
-    <path d="M 675 263 L 675 315" class="flow-line-blue" />
-    <path d="M 675 315 L 540 315 L 540 680 L 520 680" class="flow-line-blue" marker-end="url(#arrow-blue)" />
-    <path d="M 675 315 L 775 315 L 775 680 L 755 680" class="flow-line-blue" marker-end="url(#arrow-blue)" />
-    <path d="M 675 315 L 1020 315 L 1020 680 L 1000 680" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 925 263 L 925 315" class="flow-line-blue" />
+    <path d="M 925 315 L 395 315 L 395 680 L 410 680" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 925 315 L 630 315 L 630 680 L 650 680" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 925 315 L 875 315 L 875 680 L 890 680" class="flow-line-blue" marker-end="url(#arrow-blue)" />
 
     <!-- Port 80/443 Badge on ALB -> EKS Pods -->
     <g transform="translate(775, 305)">
@@ -415,9 +415,9 @@
 
     <!-- Pod A <-> Pod B Service Mesh mTLS Traffic via ztunnel (Nodes Internal L4 Encryption) -->
     <!-- Pod A-1 (Right) -> ztunnel (Inbound Redirection, solid) - Bypasses cards on the right (x=530) -> ztunnel border (x=520, y=430) -->
-    <path d="M 510 650 L 530 650 L 530 430 L 520 430" class="flow-line-red" marker-end="url(#arrow-red)" />
+    <path d="M 525 666 L 550 666 L 550 430 L 535 430" class="flow-line-red" marker-end="url(#arrow-red)" />
     <!-- ztunnel -> Pod B-1 (Left) (Outbound Delivery, dashed) - Bypasses cards on the left (x=360) -> Pod B-1 (x=380) - Connected exactly to ztunnel left border (y=430) -->
-    <path d="M 370 430 L 360 430 L 360 692 L 380 692" class="flow-line-red" stroke-dasharray="3 3" marker-end="url(#arrow-red)" />
+    <path d="M 385 430 L 360 430 L 360 708 L 395 708" class="flow-line-red" stroke-dasharray="3 3" marker-end="url(#arrow-red)" />
     <text x="500" y="405" font-size="8" fill="#e11d48" font-weight="700">mTLS Encryption</text>
   </g>
 </svg>
