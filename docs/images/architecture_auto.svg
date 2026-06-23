@@ -337,9 +337,9 @@
 
     <!-- 3. ALB to EKS Node Pods (IP routing via VPC CNI) -->
     <path d="M 590 263 L 590 315" class="flow-line-blue" />
-    <path d="M 590 315 L 490 315 L 490 535 L 505 535" class="flow-line-blue" marker-end="url(#arrow-blue)" />
-    <path d="M 590 315 L 725 315 L 725 535 L 740 535" class="flow-line-blue" marker-end="url(#arrow-blue)" />
-    <path d="M 590 315 L 970 315 L 970 535 L 985 535" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 590 315 L 490 315 L 490 650 L 505 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 590 315 L 725 315 L 725 650 L 740 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 590 315 L 970 315 L 970 650 L 985 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
 
     <!-- Port 80/443 Badge on ALB -> EKS Pods -->
     <g transform="translate(775, 305)">
@@ -414,8 +414,9 @@
     <path d="M 1055 380 L 1090 380 L 1090 305 L 1120 305" class="flow-line-green" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" fill="none" />
 
     <!-- Pod A <-> Pod B Service Mesh mTLS Traffic via ztunnel (Nodes Internal L4 Encryption) -->
-    <path d="M 535 670 L 535 700 Q 515 700 500 700 Q 485 700 485 670" class="flow-line-red" stroke-dasharray="2 2" marker-end="url(#arrow-red)" />
-    <path d="M 485 670 L 485 390 L 505 390" class="flow-line-red" marker-end="url(#arrow-red)" />
+    <path d="M 535 670 L 535 700 Q 515 700 500 700 Q 485 700 485 670" class="flow-line-red" stroke-dasharray="2 2" />
+    <path d="M 485 670 L 485 420 L 505 420" class="flow-line-red" marker-end="url(#arrow-red)" />
+    <path d="M 505 440 L 470 440 L 470 692 L 485 692" class="flow-line-red" marker-end="url(#arrow-red)" />
     <text x="500" y="405" font-size="8" fill="#e11d48" font-weight="700">mTLS Encryption</text>
   </g>
 </svg>
