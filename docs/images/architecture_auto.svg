@@ -330,23 +330,23 @@
     <text x="75" y="200" text-anchor="end" font-size="9" fill="#991b1b" font-weight="700">1. DNS Query</text>
 
     <!-- 2. Internet to ALB (Direct) -->
-    <path d="M 140 135 L 925 135 L 925 178" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 140 135 L 690 135 L 690 178" class="flow-line-blue" marker-end="url(#arrow-blue)" />
     <g transform="translate(174, 115)">
       <text x="0" y="10" font-size="9" font-weight="700" fill="#1d4ed8">2. User Request (HTTPS :443)</text>
     </g>
 
     <!-- 3. ALB to EKS Node Pods (IP routing via VPC CNI) -->
-    <path d="M 925 263 L 925 315" class="flow-line-blue" />
-    <path d="M 925 315 L 460 315 L 460 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
-    <path d="M 925 315 L 695 315 L 695 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
-    <path d="M 925 315 L 940 315 L 940 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 690 263 L 690 315" class="flow-line-blue" />
+    <path d="M 690 315 L 460 315 L 460 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 690 315 L 695 315 L 695 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 690 315 L 940 315 L 940 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
 
     <!-- Port 80/443 Badge on ALB -> EKS Pods -->
-    <g transform="translate(775, 305)">
+    <g transform="translate(520, 305)">
       <rect width="65" height="18" class="port-badge" />
       <text x="32.5" y="12" class="port-text">VPC CNI :IP</text>
     </g>
-    <text x="775" y="298" font-size="9" font-weight="700" fill="#1d4ed8">3. Direct Route to Pods</text>
+    <text x="520" y="298" font-size="9" font-weight="700" fill="#1d4ed8">3. Direct Route to Pods</text>
 
     <!-- 4. EKS Node Outbound (Egress) to NAT Gateway -->
     <path d="M 490 340 L 490 263" class="flow-line-dash" marker-end="url(#arrow)" />
@@ -407,8 +407,8 @@
     <path d="M 1055 395 L 1120 140" class="flow-line-dash" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arrow-blue)" />
 
     <!-- EKS Nodes to S3 via S3 Gateway Endpoint -->
-    <path d="M 1040 450 L 1080 450 L 1080 775 L 1120 775" class="flow-line-dash" stroke="#15803d" stroke-width="1.5" stroke-dasharray="3 3" fill="none" />
-    <path d="M 1082 775 L 1120 775" class="flow-line-green" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" />
+    <path d="M 1040 450 L 1080 450 L 1080 793 L 1100 793" class="flow-line-dash" stroke="#15803d" stroke-width="1.5" stroke-dasharray="3 3" fill="none" />
+    <path d="M 1100 793 L 1100 535 L 1120 535" class="flow-line-green" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" fill="none" />
     
     <!-- EKS Nodes to VPC Endpoints (PrivateLink Interface) -->
     <path d="M 1055 380 L 1090 380 L 1090 305 L 1120 305" class="flow-line-green" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" fill="none" />
