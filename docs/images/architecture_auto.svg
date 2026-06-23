@@ -165,7 +165,7 @@
 
           <!-- ztunnel (Istio L4 mTLS DaemonSet) -->
           <g transform="translate(15, 60)" filter="url(#shadow)">
-            <rect width="180" height="60" class="card" style="stroke: #ef4444; stroke-width: 1.2;" />
+            <rect width="150" height="60" class="card" style="stroke: #ef4444; stroke-width: 1.2;" />
             <circle cx="20" cy="30" r="10" fill="#ef4444" opacity="0.15" />
             <text x="40" y="28" class="card-title" fill="#be123c">ztunnel (DaemonSet)</text>
             <text x="40" y="44" class="card-subtitle">Istio L4 Mutual TLS</text>
@@ -173,7 +173,7 @@
 
           <!-- Cilium (eBPF CNI Chaining DaemonSet) -->
           <g transform="translate(15, 130)" filter="url(#shadow)">
-            <rect width="180" height="60" class="card" style="stroke: #10b981; stroke-width: 1.2;" />
+            <rect width="150" height="60" class="card" style="stroke: #10b981; stroke-width: 1.2;" />
             <circle cx="20" cy="30" r="10" fill="#10b981" opacity="0.15" />
             <text x="40" y="28" class="card-title" fill="#047857">Cilium (eBPF Policy)</text>
             <text x="40" y="44" class="card-subtitle">cni.exclusive=false</text>
@@ -181,7 +181,7 @@
 
           <!-- Datadog Agent (NPM eBPF DaemonSet) -->
           <g transform="translate(15, 200)" filter="url(#shadow)">
-            <rect width="180" height="60" class="card" style="stroke: #3b82f6; stroke-width: 1.2;" />
+            <rect width="150" height="60" class="card" style="stroke: #3b82f6; stroke-width: 1.2;" />
             <circle cx="20" cy="30" r="10" fill="#3b82f6" opacity="0.15" />
             <text x="40" y="28" class="card-title" fill="#1d4ed8">Datadog Agent</text>
             <text x="40" y="44" class="card-subtitle">HostNetwork = true</text>
@@ -189,16 +189,16 @@
 
           <!-- Application Pods Inside Node -->
           <g transform="translate(15, 280)">
-            <rect width="180" height="120" rx="6" fill="#f8fafc" stroke="#cbd5e1" />
+            <rect width="150" height="120" rx="6" fill="#f8fafc" stroke="#cbd5e1" />
             <text x="10" y="18" font-size="10" font-weight="700" fill="#475569">K8s Pods</text>
             
             <!-- App Pod A -->
-            <rect x="15" y="30" width="150" height="32" rx="4" fill="#eff6ff" stroke="#93c5fd" />
-            <text x="25" y="50" font-size="11" font-weight="700" fill="#1d4ed8">App Pod A-1</text>
+            <rect x="10" y="30" width="130" height="32" rx="4" fill="#eff6ff" stroke="#93c5fd" />
+            <text x="20" y="50" font-size="11" font-weight="700" fill="#1d4ed8">App Pod A-1</text>
 
             <!-- App Pod B -->
-            <rect x="15" y="72" width="150" height="32" rx="4" fill="#f0fdf4" stroke="#86efac" />
-            <text x="25" y="92" font-size="11" font-weight="700" fill="#15803d">App Pod B-1</text>
+            <rect x="10" y="72" width="130" height="32" rx="4" fill="#f0fdf4" stroke="#86efac" />
+            <text x="20" y="92" font-size="11" font-weight="700" fill="#15803d">App Pod B-1</text>
           </g>
         </g>
 
@@ -210,35 +210,35 @@
 
           <!-- ztunnel (Istio L4 mTLS DaemonSet) -->
           <g transform="translate(15, 60)" filter="url(#shadow)">
-            <rect width="180" height="60" class="card" style="stroke: #ef4444; stroke-width: 1.2;" />
+            <rect width="150" height="60" class="card" style="stroke: #ef4444; stroke-width: 1.2;" />
             <text x="40" y="28" class="card-title" fill="#be123c">ztunnel (DaemonSet)</text>
             <text x="40" y="44" class="card-subtitle">Istio L4 Mutual TLS</text>
           </g>
 
           <!-- Cilium (eBPF CNI Chaining DaemonSet) -->
           <g transform="translate(15, 130)" filter="url(#shadow)">
-            <rect width="180" height="60" class="card" style="stroke: #10b981; stroke-width: 1.2;" />
+            <rect width="150" height="60" class="card" style="stroke: #10b981; stroke-width: 1.2;" />
             <text x="40" y="28" class="card-title" fill="#047857">Cilium (eBPF Policy)</text>
             <text x="40" y="44" class="card-subtitle">cni.exclusive=false</text>
           </g>
 
           <!-- Datadog Agent (NPM eBPF DaemonSet) -->
           <g transform="translate(15, 200)" filter="url(#shadow)">
-            <rect width="180" height="60" class="card" style="stroke: #3b82f6; stroke-width: 1.2;" />
+            <rect width="150" height="60" class="card" style="stroke: #3b82f6; stroke-width: 1.2;" />
             <text x="40" y="28" class="card-title" fill="#1d4ed8">Datadog Agent</text>
             <text x="40" y="44" class="card-subtitle">HostNetwork = true</text>
           </g>
 
           <!-- Application Pods Inside Node -->
           <g transform="translate(15, 280)">
-            <rect width="180" height="120" rx="6" fill="#f8fafc" stroke="#cbd5e1" />
+            <rect width="150" height="120" rx="6" fill="#f8fafc" stroke="#cbd5e1" />
             <text x="10" y="18" font-size="10" font-weight="700" fill="#475569">K8s Pods</text>
             
-            <rect x="15" y="30" width="150" height="32" rx="4" fill="#eff6ff" stroke="#93c5fd" />
-            <text x="25" y="50" font-size="11" font-weight="700" fill="#1d4ed8">App Pod A-2</text>
+            <rect x="10" y="30" width="130" height="32" rx="4" fill="#eff6ff" stroke="#93c5fd" />
+            <text x="20" y="50" font-size="11" font-weight="700" fill="#1d4ed8">App Pod A-2</text>
 
-            <rect x="15" y="72" width="150" height="32" rx="4" fill="#f0fdf4" stroke="#86efac" />
-            <text x="25" y="92" font-size="11" font-weight="700" fill="#15803d">App Pod B-2</text>
+            <rect x="10" y="72" width="130" height="32" rx="4" fill="#f0fdf4" stroke="#86efac" />
+            <text x="20" y="92" font-size="11" font-weight="700" fill="#15803d">App Pod B-2</text>
           </g>
         </g>
 
@@ -250,21 +250,21 @@
 
           <!-- ztunnel (Istio L4 mTLS DaemonSet) -->
           <g transform="translate(15, 60)" filter="url(#shadow)">
-            <rect width="180" height="60" class="card" style="stroke: #ef4444; stroke-width: 1.2;" />
+            <rect width="150" height="60" class="card" style="stroke: #ef4444; stroke-width: 1.2;" />
             <text x="40" y="28" class="card-title" fill="#be123c">ztunnel (DaemonSet)</text>
             <text x="40" y="44" class="card-subtitle">Istio L4 Mutual TLS</text>
           </g>
 
           <!-- Cilium (eBPF CNI Chaining DaemonSet) -->
           <g transform="translate(15, 130)" filter="url(#shadow)">
-            <rect width="180" height="60" class="card" style="stroke: #10b981; stroke-width: 1.2;" />
+            <rect width="150" height="60" class="card" style="stroke: #10b981; stroke-width: 1.2;" />
             <text x="40" y="28" class="card-title" fill="#047857">Cilium (eBPF Policy)</text>
             <text x="40" y="44" class="card-subtitle">cni.exclusive=false</text>
           </g>
 
           <!-- Datadog Agent (NPM eBPF DaemonSet) -->
           <g transform="translate(15, 200)" filter="url(#shadow)">
-            <rect width="180" height="60" class="card" style="stroke: #3b82f6; stroke-width: 1.2;" />
+            <rect width="150" height="60" class="card" style="stroke: #3b82f6; stroke-width: 1.2;" />
             <circle cx="20" cy="30" r="10" fill="#3b82f6" opacity="0.15" />
             <text x="40" y="28" class="card-title" fill="#1d4ed8">Datadog Agent</text>
             <text x="40" y="44" class="card-subtitle">HostNetwork = true</text>
@@ -272,14 +272,14 @@
 
           <!-- Application Pods Inside Node -->
           <g transform="translate(15, 280)">
-            <rect width="180" height="120" rx="6" fill="#f8fafc" stroke="#cbd5e1" />
+            <rect width="150" height="120" rx="6" fill="#f8fafc" stroke="#cbd5e1" />
             <text x="10" y="18" font-size="10" font-weight="700" fill="#475569">K8s Pods</text>
             
-            <rect x="15" y="30" width="150" height="32" rx="4" fill="#eff6ff" stroke="#93c5fd" />
-            <text x="25" y="50" font-size="11" font-weight="700" fill="#1d4ed8">App Pod A-3</text>
+            <rect x="10" y="30" width="130" height="32" rx="4" fill="#eff6ff" stroke="#93c5fd" />
+            <text x="20" y="50" font-size="11" font-weight="700" fill="#1d4ed8">App Pod A-3</text>
 
-            <rect x="15" y="72" width="150" height="32" rx="4" fill="#f0fdf4" stroke="#86efac" />
-            <text x="25" y="92" font-size="11" font-weight="700" fill="#15803d">App Pod B-3</text>
+            <rect x="10" y="72" width="130" height="32" rx="4" fill="#f0fdf4" stroke="#86efac" />
+            <text x="20" y="92" font-size="11" font-weight="700" fill="#15803d">App Pod B-3</text>
           </g>
         </g>
 
@@ -337,9 +337,9 @@
 
     <!-- 3. ALB to EKS Node Pods (IP routing via VPC CNI) -->
     <path d="M 590 263 L 590 315" class="flow-line-blue" />
-    <path d="M 590 315 L 490 315 L 490 650 L 505 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
-    <path d="M 590 315 L 725 315 L 725 650 L 740 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
-    <path d="M 590 315 L 970 315 L 970 650 L 985 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 590 315 L 540 315 L 540 650 L 510 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 590 315 L 775 315 L 775 650 L 745 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 590 315 L 1020 315 L 1020 650 L 990 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
 
     <!-- Port 80/443 Badge on ALB -> EKS Pods -->
     <g transform="translate(775, 305)">
@@ -414,10 +414,10 @@
     <path d="M 1055 380 L 1090 380 L 1090 305 L 1120 305" class="flow-line-green" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)" fill="none" />
 
     <!-- Pod A <-> Pod B Service Mesh mTLS Traffic via ztunnel (Nodes Internal L4 Encryption) -->
-    <!-- Pod A-1 (Right) -> ztunnel (Inbound Redirection, dashed) -->
-    <path d="M 525 650 L 525 420 L 505 420" class="flow-line-red" stroke-dasharray="3 3" marker-end="url(#arrow-red)" />
-    <!-- ztunnel -> Pod B-1 (Left) (Outbound Delivery, encrypted solid) -->
-    <path d="M 505 440 L 485 440 L 485 692" class="flow-line-red" marker-end="url(#arrow-red)" />
+    <!-- Pod A-1 (Right) -> ztunnel (Inbound Redirection, dashed) - Bypasses cards on the right (x=530) -> ztunnel border (x=520) -->
+    <path d="M 510 650 L 530 650 L 530 420 L 520 420" class="flow-line-red" stroke-dasharray="3 3" marker-end="url(#arrow-red)" />
+    <!-- ztunnel -> Pod B-1 (Left) (Outbound Delivery, encrypted solid) - Bypasses cards on the left (x=360) -> Pod B-1 (x=380) -->
+    <path d="M 370 440 L 360 440 L 360 692 L 380 692" class="flow-line-red" marker-end="url(#arrow-red)" />
     <text x="500" y="405" font-size="8" fill="#e11d48" font-weight="700">mTLS Encryption</text>
   </g>
 </svg>
