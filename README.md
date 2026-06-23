@@ -124,3 +124,18 @@ terraform validate
 4. ターミナルに 「ローカルのステートをリモートS3へ移行しますか？ (Do you want to copy existing state...)」 とメッセージが表示されるので、`yes` と入力します。
 
 これで、初期セットアップは完了です。以降は安全なリモートバックエンド管理下で `terraform plan` / `apply` を実行できます。
+
+---
+
+## 🌟 [オプション] 最新モダン EKS Auto Mode 構成 (eks-modern-auto/)
+
+本リポジトリには、通常の3層Webインフラ（Aurora/Redis）構成に加えて、AWS EKS (v1.32想定) の最新機能を活用した別館構成を同梱しています。
+
+* **フォルダ位置**: [`eks-modern-auto/`](file:///c:/Git/learning-terraform-concepts/eks-modern-auto/)
+* **構成要素**:
+  * **EKS Auto Mode**: マネージドKarpenterによるノード自動スケール、ELB（ロードバランサー）、EBS（ブロックストレージ）のライフサイクル自動管理。
+  * **Cilium (CNI Chaining)**: AWS VPC CNI と競合させずに、eBPF による高性能ネットワークポリシー制御を有効化。
+  * **Istio Ambient Mesh**: サイドカー不要で、ノードレベルの ztunnel による安全な L4 mTLS と L7 制御。
+  * **Datadog Agent**: HostNetwork接続によるコンテナおよび eBPF ネットワークの可観測性。
+
+詳細なアーキテクチャ設計および検証手順については/またはセットアップについて、**[eks-modern-auto/README.md](file:///c:/Git/learning-terraform-concepts/eks-modern-auto/README.md)** を参照してください。
