@@ -337,9 +337,9 @@
 
     <!-- 3. ALB to EKS Node Pods (IP routing via VPC CNI) -->
     <path d="M 925 263 L 925 315" class="flow-line-blue" />
-    <path d="M 925 315 L 395 315 L 395 680 L 410 680" class="flow-line-blue" marker-end="url(#arrow-blue)" />
-    <path d="M 925 315 L 630 315 L 630 680 L 650 680" class="flow-line-blue" marker-end="url(#arrow-blue)" />
-    <path d="M 925 315 L 875 315 L 875 680 L 890 680" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 925 315 L 460 315 L 460 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 925 315 L 695 315 L 695 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
+    <path d="M 925 315 L 940 315 L 940 650" class="flow-line-blue" marker-end="url(#arrow-blue)" />
 
     <!-- Port 80/443 Badge on ALB -> EKS Pods -->
     <g transform="translate(775, 305)">
@@ -417,7 +417,7 @@
     <!-- Pod A-1 (Right) -> ztunnel (Inbound Redirection, solid) - Bypasses cards on the right (x=530) -> ztunnel border (x=520, y=430) -->
     <path d="M 525 666 L 550 666 L 550 430 L 535 430" class="flow-line-red" marker-end="url(#arrow-red)" />
     <!-- ztunnel -> Pod B-1 (Left) (Outbound Delivery, dashed) - Bypasses cards on the left (x=360) -> Pod B-1 (x=380) - Connected exactly to ztunnel left border (y=430) -->
-    <path d="M 385 430 L 360 430 L 360 708 L 395 708" class="flow-line-red" stroke-dasharray="3 3" marker-end="url(#arrow-red)" />
+    <path d="M 385 430 L 375 430 L 375 708 L 395 708" class="flow-line-red" stroke-dasharray="3 3" marker-end="url(#arrow-red)" />
     <text x="500" y="405" font-size="8" fill="#e11d48" font-weight="700">mTLS Encryption</text>
   </g>
 </svg>
