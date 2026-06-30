@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: three-tier-application
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/shadow-architect-dev/learning-terraform-concepts.git'
+    targetRevision: HEAD
+    path: bootstrap/three-tier-app-manifests
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

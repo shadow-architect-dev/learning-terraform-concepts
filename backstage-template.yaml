@@ -1,0 +1,47 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: fisc-eks-infrastructure-template
+  title: FISC-Compliant EKS Infrastructure
+  description: Create a secure, 3-tier AWS EKS cluster with WAFv2, Aurora DB, and Datadog monitoring.
+  tags:
+    - aws
+    - eks
+    - terraform
+    - security
+    - fisc
+spec:
+  owner: platform-engineering-team
+  type: service
+  parameters:
+    - title: Provide Environment Details
+      required:
+        - environment_name
+        - aws_region
+      properties:
+        environment_name:
+          title: Environment Name
+          type: string
+          description: Name of the environment (e.g. dev-test, sandbox)
+          default: sandbox
+        aws_region:
+          title: Target AWS Region
+          type: string
+          default: ap-northeast-1
+          enum:
+            - ap-northeast-1
+            - us-west-2
+            - eu-central-1
+  steps:
+    - id: fetch-base
+      name: Fetch Base Infrastructure Template
+      action: fetch:template
+      input:
+        url: ./
+        values:
+          env_name: ${{ parameters.environment_name }}
+          aws_region: ${{ parameters.aws_region }}
+  output:
+    links:
+      - title: View Repository
+        url: ${{ steps['fetch-base'].output.remoteUrl }}

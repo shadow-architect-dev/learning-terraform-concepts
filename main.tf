@@ -47,3 +47,10 @@ module "monitoring" {
   env_name     = var.env_name
   cluster_name = module.eks.cluster_name
 }
+
+module "chaos" {
+  source             = "./modules/chaos"
+  env_name           = var.env_name
+  vpc_id             = module.vpc.vpc_id
+  private_subnet_ids = module.vpc.private_subnet_ids
+}

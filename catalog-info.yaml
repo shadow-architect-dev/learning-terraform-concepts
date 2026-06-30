@@ -1,0 +1,18 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: eks-terraform-infrastructure
+  description: FISC-compliant AWS EKS 3-Tier Web Application Infrastructure managed by Terraform.
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - aws
+    - eks
+    - terraform
+    - security
+    - fisc-compliant
+spec:
+  type: infrastructure
+  lifecycle: production
+  owner: platform-engineering-team
+  system: corporate-cloud-platform

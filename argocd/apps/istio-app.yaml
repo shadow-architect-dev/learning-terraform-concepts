@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-ambient
+  namespace: argocd
+spec:
+  project: default
+  source:
+    chart: istio-cni
+    repoURL: 'https://istio-release.s3.amazonaws.com/charts'
+    targetRevision: 1.21.0
+    helm:
+      values: |
+        profile: "ambient"
+        cni:
+          ambient:
+            enabled: true
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
