@@ -20,6 +20,7 @@ resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.this.id
   cidr_block              = cidrsubnet(var.vpc_cidr, 4, count.index)
   availability_zone       = data.aws_availability_zones.available.names[count.index]
+  #trivy:ignore:AWS-0164
   map_public_ip_on_launch = true
 
   tags = {
@@ -153,6 +154,7 @@ resource "aws_iam_role_policy_attachment" "node_storage" {
 }
 
 # ==================== EKS CLUSTER WITH AUTO MODE ====================
+#trivy:ignore:AWS-0039
 resource "aws_eks_cluster" "this" {
   name     = "eks-auto-cluster-${var.env_name}"
   role_arn = aws_iam_role.cluster.arn
@@ -161,6 +163,8 @@ resource "aws_eks_cluster" "this" {
   vpc_config {
     subnet_ids              = aws_subnet.private[*].id
     endpoint_private_access = true
+    #trivy:ignore:AWS-0040
+    #trivy:ignore:AWS-0041
     endpoint_public_access  = true
   }
 

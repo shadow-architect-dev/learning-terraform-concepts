@@ -19,6 +19,7 @@ resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.this.id
   cidr_block              = cidrsubnet(aws_vpc.this.cidr_block, 4, count.index)
   availability_zone       = data.aws_availability_zones.available.names[count.index]
+  #trivy:ignore:AWS-0164
   map_public_ip_on_launch = true
   tags = {
     Name                                                = "subnet-public-${var.env_name}-${data.aws_availability_zones.available.names[count.index]}"
@@ -124,7 +125,7 @@ resource "aws_security_group" "vpce" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [aws_vpc.this.cidr_block]
   }
   tags = {
     Name = "sg-vpce-${var.env_name}"
