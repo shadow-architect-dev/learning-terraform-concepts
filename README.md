@@ -315,3 +315,21 @@ EKS（Workloadアカウント）側から Log Archive（Landing Zone）アカウ
 * **エラー予算運用ポリシー**: [error_budget_policy.md](file:///c:/Git/learning-terraform-concepts/docs/error_budget_policy.md) ➡ 可用性低下時に「リリースの凍結」や「信頼性向上タスクへのリソース全振り」を自動執行するチーム合意ポリシー。
 * **障害報告書 (Post-Mortem)**: [2026-06-oom-outage.md](file:///c:/Git/learning-terraform-concepts/docs/postmortems/2026-06-oom-outage.md) ➡ メモリリークによるOOMクラッシュ（模擬）を対象とした障害事後評価書。5-Whys分析と再発防止のロードマップ定義。
 * **インシデント復旧手順書 (Runbook)**: [alb_latency_high.md](file:///c:/Git/learning-terraform-concepts/docs/runbooks/alb_latency_high.md) ➡ ALB遅延アラート受信時に、オンコール担当がトリアージから応急対応（切り戻し・WAF緊急メンテナンス等）を迅速に行うためのマニュアル。
+
+---
+
+## 🔮 Platform Engineering & GitOps & Chaos as Code の統合
+
+本プロジェクトは、インフラのプロビジョニングに留まらず、運用の効率化・自動化・可観測性を極限まで高めるための以下のエンタープライズ・プラクティスを実装しています。
+
+### 1. Platform Engineering (Backstage 連携によるセルフサービス化)
+* **概要**: Spotify製の開発者ポータル **Backstage** との統合を想定し、ルートディレクトリに [catalog-info.yaml](file:///c:/Git/learning-terraform-concepts/catalog-info.yaml) および [backstage-template.yaml](file:///c:/Git/learning-terraform-concepts/backstage-template.yaml) を配置しています。
+* **効果**: 開発者がブラウザ上の入力フォームから「FISC準拠のEKS環境」を1クリックで安全にオンデマンド複製・払い出し可能（Golden Pathの提供）にします。
+
+### 2. Kubernetes GitOps (ArgoCD による宣言的運用)
+* **概要**: `argocd/` ディレクトリに、アドオン（Cilium CNI, Istio Ambient Mesh）およびWebアプリ用の **ArgoCD Applicationマニフェスト** を配置しています。
+* **効果**: インフラ作成後のKubernetes内部のアドオンやアプリケーションのライフサイクルを完全に GitOps 化し、状態の自動検知・自己修復（Self-Healing）を実現します。
+
+### 3. Chaos as Code (AWS FIS による実験自動化)
+* **概要**: [modules/chaos/](file:///c:/Git/learning-terraform-concepts/modules/chaos/) モジュールにて、AWS FIS (Fault Injection Service) を用いたカオス実験シナリオをコード化しています。
+* **効果**: EKSワーカーノードへランダムにCPU高負荷ストレスを注入する実験（`aws_fis_experiment_template`）をコードから即座に実行可能にし、オートスケーリングの挙動やDatadogアラートの信頼性を自動検証します。
