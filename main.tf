@@ -1,7 +1,9 @@
 module "vpc" {
-  source   = "./modules/vpc"
-  env_name = var.env_name
-  vpc_cidr = var.vpc_cidr
+  source             = "./modules/vpc"
+  env_name           = var.env_name
+  vpc_cidr           = var.vpc_cidr
+  ipam_pool_id       = var.ipam_pool_id
+  transit_gateway_id = var.transit_gateway_id
 }
 module "security" {
   source   = "./modules/security"
@@ -19,6 +21,8 @@ module "eks" {
   node_min_size          = var.eks_node_min_size
   log_archive_account_id = var.log_archive_account_id
   aws_region             = var.aws_region
+  datadog_api_key        = var.datadog_api_key
+  datadog_app_key        = var.datadog_app_key
 }
 module "database" {
   source                     = "./modules/database"
@@ -36,4 +40,10 @@ module "waf" {
   env_name         = var.env_name
   maintenance_mode = var.maintenance_mode
   bypass_ip_cidrs  = var.waf_bypass_ip_cidrs
+}
+
+module "monitoring" {
+  source       = "./modules/monitoring"
+  env_name     = var.env_name
+  cluster_name = module.eks.cluster_name
 }

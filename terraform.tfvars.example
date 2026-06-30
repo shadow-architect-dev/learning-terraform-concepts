@@ -1,6 +1,8 @@
 aws_region             = "ap-northeast-1"
 env_name               = "dev"
-vpc_cidr               = "10.0.0.0/16"
+# vpc_cidr               = "10.0.0.0/16" # IPAMを使用する場合はコメントアウト
+ipam_pool_id           = "ipam-pool-dummy-shared-by-landing-zone"
+transit_gateway_id     = "tgw-dummy-shared-by-landing-zone"
 eks_node_instance_type = "t3.medium"
 eks_node_desired_size  = 2
 eks_node_max_size      = 3

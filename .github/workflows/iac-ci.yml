@@ -1,0 +1,80 @@
+name: IaC Quality & Security CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-and-scan:
+    name: Terraform Validate & Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.0
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run: |
+          terraform init -backend=false
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Trivy による IaC セキュリティスキャン
+      - name: Run Trivy vulnerability scanner in IaC mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          hide-progress: false
+          format: 'table'
+          exit-code: '1' # HIGH/CRITICAL の脆弱性が見つかった場合はCIを落とす
+          ignore-unfixed: true
+          severity: 'HIGH,CRITICAL'
+
+  cost-estimation:
+    name: Infrastructure Cost Estimation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Infracost
+        uses: infracost/actions/setup@v3
+        with:
+          api-key: ${{ secrets.INFRACOST_API_KEY }}
+
+      # Checkout the base branch of the PR to generate base cost JSON
+      - name: Checkout Base Branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      - name: Generate Infracost Base JSON
+        run: |
+          infracost breakdown --path=. --format=json --out-file=/tmp/infracost-base.json
+
+      # Checkout the current PR branch
+      - name: Checkout PR Branch
+        uses: actions/checkout@v4
+
+      - name: Generate Infracost Diff JSON
+        run: |
+          infracost diff --path=. --compare-to=/tmp/infracost-base.json --format=json --out-file=/tmp/infracost-diff.json
+
+      - name: Post Infracost Comment to PR
+        uses: infracost/actions/comment@v3
+        with:
+          path: /tmp/infracost-diff.json
+          behavior: update

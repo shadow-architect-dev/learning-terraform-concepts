@@ -10,6 +10,10 @@ FISC安全対策基準に準拠した、セキュアで高可用性な AWS EKS 3
 
 ![System Architecture](docs/images/architecture.svg)
 
+> [!NOTE]
+> **集約アウトバウンド（Common Egress）移行に伴う構成変更**:
+> 上記の図には自VPC内の「NAT Gateway」が描かれていますが、インフラコスト最適化（FinOps）およびセキュリティ統制の一元化のため、現在はVPC内の自前 NAT Gateway は完全に撤廃されています。すべてのインターネット向け送信通信（`0.0.0.0/0`）は、**Transit Gateway (TGW)** を経由して共通基盤である `Shared Services` アカウントの集約 NAT Gateway から安全に送出される構成となっています（IaCコード上はすでに反映済みです）。
+
 ---
 
 ## 🛡️ FISC安全対策基準に準拠したセキュリティ設計
@@ -44,19 +48,31 @@ FISC安全対策基準に準拠した、セキュアで高可用性な AWS EKS 3
 
 ```text
 learning-terraform-concepts/
+  ├── .github/
+  │     └── workflows/
+  │           └── iac-ci.yml  # GitHub Actions による IaC CI/CD (Trivy & Infracost)
   ├── .agents/                # AIエージェント（Antigravity）用設定フォルダ
   │     └── AGENTS.md         # プロジェクト専用のコーディング規約・FISC制約
-  ├── providers.tf            # 各種プロバイダー（AWS, Kubernetes, Helm）の定義
+  ├── docs/
+  │     ├── images/           # システム構成図等
+  │     ├── chaos_engineering.md # カオスエンジニアリング検証プレイブック
+  │     ├── error_budget_policy.md # エラー予算運用ポリシー
+  │     ├── postmortems/      # 障害報告書（ポストモーテム）
+  │     │     └── 2026-06-oom-outage.md
+  │     └── runbooks/         # インシデント復旧手順書（ランブック）
+  │           └── alb_latency_high.md
+  ├── providers.tf            # 各種プロバイダー（AWS, Kubernetes, Helm, Datadog）の定義
   ├── variables.tf            # ルートレベルの変数宣言
   ├── outputs.tf              # インフラのアウトプット定義
   ├── main.tf                 # 各子モジュールの呼び出しと結合定義
   ├── terraform.tfvars        # 開発環境用の実パラメータ値
   └── modules/
-        ├── vpc/              # VPC、3AZサブネット、NAT GW、VPCエンドポイント
+        ├── vpc/              # VPC、3AZサブネット、TGWアタッチメント、VPCエンドポイント（※自前NAT GWは廃止）
         ├── security/         # KMS CMKの作成とポリシー管理
         ├── eks/              # EKSクラスター、Node Group、OIDC、ALB Controller、Fluent Bit (ログ転送)
         ├── database/         # Aurora DB、Redis、認証情報、Egress空のSG
-        └── waf/              # WAFv2 WebACL、IP制限、503メンテナンス画面定義
+        ├── waf/              # WAFv2 WebACL、IP制限、503メンテナンス画面定義
+        └── monitoring/       # Datadog監視アラート・SLO定義 (Monitoring as Code)
 ```
 
 ---
@@ -215,6 +231,20 @@ terraform validate
 ```
 
 ---
+## 🌐 AWS VPC IPAM ＆ Transit Gateway によるマルチアカウント閉域ネットワーク統合
+
+本プロジェクトは、組織全体の共通基盤（AWS Landing Zone）とシームレスに閉域統合される、モダンなマルチアカウント・ネットワークトポロジーを想定して設計されています。
+
+### 1. AWS VPC IPAM による動的IPアドレス管理（重複回避の自動化）
+* **設計**: 手動での VPC CIDR ブロック割り当て（例: `10.0.0.0/16` などのハードコード）を排除し、**AWS VPC IPAM（IP Address Manager）** を採用しています。
+* **効果**: 共通基盤側で中央管理・共有されたIPAMプールから、自VPCの作成時に `/16` のCIDRを動的に切り出してアロケーションします。これにより、別システム（CDKで管理されたECSなど）や他環境との間でIPアドレス空間の重複（IP conflict）が一切発生しない堅牢な自動化を実現しています。
+* **動的CIDR参照**: VPCのIP範囲がデプロイ時に動的に決まるため、サブネット（Public/Private/Isolated）やセキュリティグループのルール定義にはハードコードを排除し、`aws_vpc.this.cidr_block` を用いた完全な動的計算（`cidrsubnet`）でリファクタリングされています。
+
+### 2. Transit Gateway (TGW) 経由の集約アウトバウンド（Common Egress）
+* **設計**: 自VPC内から **NAT Gatewayを完全に撤廃（FinOpsコスト最適化）** し、共有された Transit Gateway (TGW) へのVPCアタッチメントを配置しています。
+* **ルーティング**: 自VPCの各プライベートルートテーブルに対し、インターネット宛て（`0.0.0.0/0`）を含むすべてのアウトバウンド通信を TGW へ転送するルート（`aws_route`）を定義しています。通信は TGW を経由して Shared Services アカウントに構築された共通の集約 NAT Gateway を通じてインターネットへ抜けていくため、起動費用を劇的に削減しながら安全な通信監査を一元化しています。
+
+---
 
 ## 📝 ログアーカイブ（Landing Zone）への Fluent Bit ログ転送のセットアップ
 
@@ -251,3 +281,37 @@ EKS（Workloadアカウント）側から Log Archive（Landing Zone）アカウ
    ```
 3. **S3バケットでの着信確認**:
    Log Archive アカウントの S3 バケットの `workloads/` プレフィックス配下に、GZIP圧縮されたコンテナログオブジェクトが作成されていることを確認します。
+
+---
+
+## 📈 SRE 信頼性設計と可観測性（Observability & Chaos Engineering）
+
+本プロジェクトは、インフラの構築（IaC）に留まらず、システムの信頼性・可観測性の向上および安全なデリバリーを自動化する **SRE (Site Reliability Engineering)** の手法を取り入れています。
+
+### 1. CI/CD による IaC 品質保証 & コスト自動予測
+[.github/workflows/iac-ci.yml](file:///c:/Git/learning-terraform-concepts/.github/workflows/iac-ci.yml) において、以下の自動化検証パイプラインを構築しています。
+* **コード品質 & 構文チェック**: プッシュ/プルリクエスト（PR）時に `terraform fmt` および `terraform validate` を自動実行します。
+* **シフトレフト・セキュリティスキャン**: **Trivy** を CI に統合し、マージ前にインフラ構成의 セキュリティ脆弱性やベストプラクティス違反（HIGH / CRITICAL 検出時）を自動で検知し、デプロイをブロックします。
+* **FinOps コスト予測**: **Infracost** を CI に組み込み、Terraform の差分から「変更による月々のAWSコストの予測増減額」を算出し、GitHub の PR に自動コメントでフィードバックします。
+
+### 2. Monitoring as Code（Datadog による監視とSLOのコード化）
+[modules/monitoring/](file:///c:/Git/learning-terraform-concepts/modules/monitoring/) モジュールにて、監視設定自体を Terraform で構成管理する手法を採用しています。
+* **高可用性アラート (Monitors)**:
+  * EKSワーカーノードの CPU 使用率監視
+  * ALB レベルの 5xx エラー率監視（全トラフィックの 1% 超過で発報）
+  * ALB 平均応答時間（レイテンシ 500ms 超過）の監視
+* **SRE 評価指標 (SLO/SLI)**:
+  * **可用性 (Availability) SLO**: 30日間で5xxエラーの割合を 0.1% 未満に抑える（ターゲット: 99.9%）
+  * **応答速度 (Latency) SLO**: 30日間で 500ms 以内に応答したリクエストを 90% 以上にする（ターゲット: 90.0%）
+
+### 3. カオスエンジニアリング（障害テストプレイブック）
+高可用性設計（3AZ、セルフヒーリング）が実際に稼働するかを実証するための障害注入テストシナリオを [docs/chaos_engineering.md](file:///c:/Git/learning-terraform-concepts/docs/chaos_engineering.md) に整備しています。
+* **シナリオ 1**: EKSノード強制停止時の Karpenter / Auto Mode による自己修復・ノード自動プロビジョニング。
+* **シナリオ 2**: 特定AZ遮断時の ALB によるトラフィック自動切り替え（無停止サービス継続）。
+* **シナリオ 3**: アプリPod OOM発生時の Kubelet による自己修復（高速再起動）と Readiness Probe による保護。
+
+### 4. 信頼性運用のための実践的ドキュメント（SRE Artifacts）
+採用選考における実務評価を想定し、単なる設定に留まらない、運用フェーズを統治するためのSREドキュメントを配置しています。
+* **エラー予算運用ポリシー**: [error_budget_policy.md](file:///c:/Git/learning-terraform-concepts/docs/error_budget_policy.md) ➡ 可用性低下時に「リリースの凍結」や「信頼性向上タスクへのリソース全振り」を自動執行するチーム合意ポリシー。
+* **障害報告書 (Post-Mortem)**: [2026-06-oom-outage.md](file:///c:/Git/learning-terraform-concepts/docs/postmortems/2026-06-oom-outage.md) ➡ メモリリークによるOOMクラッシュ（模擬）を対象とした障害事後評価書。5-Whys分析と再発防止のロードマップ定義。
+* **インシデント復旧手順書 (Runbook)**: [alb_latency_high.md](file:///c:/Git/learning-terraform-concepts/docs/runbooks/alb_latency_high.md) ➡ ALB遅延アラート受信時に、オンコール担当がトリアージから応急対応（切り戻し・WAF緊急メンテナンス等）を迅速に行うためのマニュアル。

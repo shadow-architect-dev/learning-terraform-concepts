@@ -13,6 +13,10 @@ terraform {
       source  = "hashicorp/helm"
       version = "~> 2.0"
     }
+    datadog = {
+      source  = "datadog/datadog"
+      version = "~> 3.0"
+    }
   }
   # 初期セットアップ時は local バックエンドで実行し、S3 作成後に移行します。
   # 移行の際は backend "local" ブロックをコメントアウトし、backend "s3" ブロックに値を入力して terraform init を実行してください。
@@ -50,4 +54,8 @@ provider "helm" {
     cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority[0].data)
     token                  = data.aws_eks_cluster_auth.cluster.token
   }
+}
+provider "datadog" {
+  api_key = var.datadog_api_key
+  app_key = var.datadog_app_key
 }

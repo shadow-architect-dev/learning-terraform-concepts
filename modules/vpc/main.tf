@@ -3,7 +3,9 @@ data "aws_availability_zones" "available" {
 }
 # 1. VPC の定義
 resource "aws_vpc" "this" {
-  cidr_block           = var.vpc_cidr
+  cidr_block           = var.ipam_pool_id == null ? var.vpc_cidr : null
+  ipv4_ipam_pool_id    = var.ipam_pool_id
+  ipv4_netmask_length  = var.ipam_pool_id != null ? 16 : null
   enable_dns_hostnames = true
   enable_dns_support   = true
   tags = {
@@ -15,7 +17,7 @@ resource "aws_vpc" "this" {
 resource "aws_subnet" "public" {
   count                   = 3
   vpc_id                  = aws_vpc.this.id
-  cidr_block              = cidrsubnet(var.vpc_cidr, 4, count.index) # 10.0.0.0/20, 10.0.16.0/20, 10.0.32.0/20
+  cidr_block              = cidrsubnet(aws_vpc.this.cidr_block, 4, count.index)
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
   tags = {
@@ -28,7 +30,7 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   count             = 3
   vpc_id            = aws_vpc.this.id
-  cidr_block        = cidrsubnet(var.vpc_cidr, 4, count.index + 4) # 10.0.64.0/20, 10.0.80.0/20, 10.0.96.0/20
+  cidr_block        = cidrsubnet(aws_vpc.this.cidr_block, 4, count.index + 4)
   availability_zone = data.aws_availability_zones.available.names[count.index]
   tags = {
     Name                                                = "subnet-private-${var.env_name}-${data.aws_availability_zones.available.names[count.index]}"
@@ -40,7 +42,7 @@ resource "aws_subnet" "private" {
 resource "aws_subnet" "isolated" {
   count             = 3
   vpc_id            = aws_vpc.this.id
-  cidr_block        = cidrsubnet(var.vpc_cidr, 4, count.index + 8) # 10.0.128.0/20, 10.0.144.0/20, 10.0.160.0/20
+  cidr_block        = cidrsubnet(aws_vpc.this.cidr_block, 4, count.index + 8)
   availability_zone = data.aws_availability_zones.available.names[count.index]
   tags = {
     Name        = "subnet-isolated-${var.env_name}-${data.aws_availability_zones.available.names[count.index]}"
@@ -54,25 +56,8 @@ resource "aws_internet_gateway" "this" {
     Name = "igw-${var.env_name}"
   }
 }
-# 4. NAT ゲートウェイ (EC2の外部疎通用、コスト最適化: dev/stgは1台、prodのみ3台構成)
-locals {
-  nat_count = var.env_name == "prod" ? 3 : 1
-}
-resource "aws_eip" "nat" {
-  count  = local.nat_count
-  domain = "vpc"
-  tags = {
-    Name = "eip-nat-${var.env_name}-${count.index}"
-  }
-}
-resource "aws_nat_gateway" "this" {
-  count         = local.nat_count
-  allocation_id = aws_eip.nat[count.index].id
-  subnet_id     = aws_subnet.public[count.index].id
-  tags = {
-    Name = "nat-${var.env_name}-${count.index}"
-  }
-}
+# 4. NAT ゲートウェイ (集約アウトバウンド移行に伴い廃止)
+# NAT GWは共通基盤（Shared Services）で一元管理するため、このVPCからは撤廃します。
 # 5. ルートテーブルとルート
 # Public Route Table
 resource "aws_route_table" "public" {
@@ -94,10 +79,6 @@ resource "aws_route_table_association" "public" {
 resource "aws_route_table" "private" {
   count  = 3
   vpc_id = aws_vpc.this.id
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.this[var.env_name == "prod" ? count.index : 0].id
-  }
   tags = {
     Name = "rt-private-${var.env_name}-${data.aws_availability_zones.available.names[count.index]}"
   }
@@ -137,7 +118,7 @@ resource "aws_security_group" "vpce" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [var.vpc_cidr]
+    cidr_blocks = [aws_vpc.this.cidr_block]
   }
   egress {
     from_port   = 0
@@ -192,4 +173,30 @@ resource "aws_vpc_endpoint" "logs" {
   tags = {
     Name = "vpce-logs-${var.env_name}"
   }
+}
+
+# ------------------------------------------------------------------------------
+# 7. AWS Transit Gateway (TGW) 接続定義
+# ------------------------------------------------------------------------------
+
+# TGW VPC アタッチメントの作成
+resource "aws_ec2_transit_gateway_vpc_attachment" "eks_tgw" {
+  transit_gateway_id = var.transit_gateway_id
+  vpc_id             = aws_vpc.this.id
+  subnet_ids         = aws_subnet.private[*].id
+
+  transit_gateway_default_route_table_association = true
+  transit_gateway_default_route_table_propagation = true
+
+  tags = {
+    Name = "tgw-attachment-${var.env_name}"
+  }
+}
+
+# プライベートルートテーブルから TGW 宛てのデフォルトルート定義（集約アウトバウンド）
+resource "aws_route" "to_tgw" {
+  count                  = 3
+  route_table_id         = aws_route_table.private[count.index].id
+  destination_cidr_block = "0.0.0.0/0" # すべてのインターネット・閉域宛てをTGWへ
+  transit_gateway_id     = var.transit_gateway_id
 }

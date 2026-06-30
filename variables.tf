@@ -10,7 +10,15 @@ variable "env_name" {
 variable "vpc_cidr" {
   type        = string
   description = "VPC CIDR Block"
-  default     = "10.0.0.0/16"
+  default     = null
+}
+variable "ipam_pool_id" {
+  type        = string
+  description = "AWS VPC IPAM pool ID shared by platform"
+}
+variable "transit_gateway_id" {
+  type        = string
+  description = "AWS Transit Gateway ID shared by platform"
 }
 # Database variables
 variable "db_instance_class" {
@@ -64,4 +72,18 @@ variable "waf_bypass_ip_cidrs" {
 variable "log_archive_account_id" {
   type        = string
   description = "AWS Account ID of the Log Archive account"
+}
+
+variable "datadog_api_key" {
+  type        = string
+  description = "Datadog API Key"
+  sensitive   = true
+  default     = "dummy_api_key"
+}
+
+variable "datadog_app_key" {
+  type        = string
+  description = "Datadog APP Key"
+  sensitive   = true
+  default     = "dummy_app_key"
 }
