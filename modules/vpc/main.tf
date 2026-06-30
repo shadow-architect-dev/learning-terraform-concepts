@@ -15,11 +15,10 @@ resource "aws_vpc" "this" {
 }
 # 2. サブネットの定義 (3つのAZに分割)
 resource "aws_subnet" "public" {
-  count             = 3
-  vpc_id            = aws_vpc.this.id
-  cidr_block        = cidrsubnet(aws_vpc.this.cidr_block, 4, count.index)
-  availability_zone = data.aws_availability_zones.available.names[count.index]
-  #trivy:ignore:AWS-0164
+  count                   = 3
+  vpc_id                  = aws_vpc.this.id
+  cidr_block              = cidrsubnet(aws_vpc.this.cidr_block, 4, count.index)
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
   tags = {
     Name                                                = "subnet-public-${var.env_name}-${data.aws_availability_zones.available.names[count.index]}"

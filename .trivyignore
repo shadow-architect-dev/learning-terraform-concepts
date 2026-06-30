@@ -1,0 +1,19 @@
+# ==============================================================================
+# Trivy Security Scan Ignore List
+# ==============================================================================
+
+# AWS-0039: EKS cluster resources should have the encryption_config block set.
+# Reason: KMS encryption config is intentionally omitted in the standalone EKS Auto Mode demo stack to simplify provisioning.
+AWS-0039
+
+# AWS-0040: Public EKS cluster access is enabled.
+# Reason: Public API endpoints are required to allow developers and GitHub Actions runners to manage resources via kubectl.
+AWS-0040
+
+# AWS-0041: EKS Cluster allows access from a public CIDR: 0.0.0.0/0.
+# Reason: Required for dynamic public access from dynamic GitHub Actions runner IPs.
+AWS-0041
+
+# AWS-0164: Subnet associates public IP address (map_public_ip_on_launch = true).
+# Reason: Necessary for hosting external load balancers (ALB) and public-facing endpoints.
+AWS-0164
