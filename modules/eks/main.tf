@@ -32,7 +32,7 @@ resource "aws_eks_cluster" "this" {
     endpoint_private_access = true
     #trivy:ignore:AWS-0040
     #trivy:ignore:AWS-0041
-    endpoint_public_access  = true
+    endpoint_public_access = true
   }
   encryption_config {
     provider {

@@ -16,10 +16,10 @@ resource "aws_vpc" "this" {
 
 # 3 AZs for High Availability
 resource "aws_subnet" "public" {
-  count                   = 3
-  vpc_id                  = aws_vpc.this.id
-  cidr_block              = cidrsubnet(var.vpc_cidr, 4, count.index)
-  availability_zone       = data.aws_availability_zones.available.names[count.index]
+  count             = 3
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = cidrsubnet(var.vpc_cidr, 4, count.index)
+  availability_zone = data.aws_availability_zones.available.names[count.index]
   #trivy:ignore:AWS-0164
   map_public_ip_on_launch = true
 
@@ -165,7 +165,7 @@ resource "aws_eks_cluster" "this" {
     endpoint_private_access = true
     #trivy:ignore:AWS-0040
     #trivy:ignore:AWS-0041
-    endpoint_public_access  = true
+    endpoint_public_access = true
   }
 
   # 1. Enable EKS Auto Mode Compute (Karpenter auto-provisioning)
