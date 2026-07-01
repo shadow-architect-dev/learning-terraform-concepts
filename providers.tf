@@ -26,15 +26,12 @@ terraform {
   # }
 
   backend "s3" {
-    bucket         = "YOUR_STATE_BUCKET_NAME" # bootstrapの実行結果(state_bucket_name)を入力
-    key            = "dev/terraform.tfstate"
-    region         = "ap-northeast-1"
-    dynamodb_table = "YOUR_DYNAMODB_TABLE_NAME" # bootstrapの実行結果(dynamodb_table_name)を入力
-    encrypt        = true
+    encrypt = true
   }
 }
 provider "aws" {
-  region = var.aws_region
+  region              = var.aws_region
+  allowed_account_ids = [var.aws_account_id]
 }
 # EKSクラスター作成後に Helm / Kubernetes プロバイダーを動的接続するための設定
 data "aws_eks_cluster" "cluster" {

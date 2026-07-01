@@ -1,0 +1,62 @@
+name: IaC Continuous Deployment
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'release/*'
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  validate-and-deploy:
+    name: Validate & Deploy to AWS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.0
+      - name: Set Environment Variables
+        id: env_setup
+        run: |
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            echo "ENV_NAME=prod" >> $GITHUB_ENV
+            echo "AWS_ROLE_ARN=${{ secrets.ROLE_ARN_PROD }}" >> $GITHUB_ENV
+          elif [[ "${{ github.ref_name }}" =~ ^release/ ]]; then
+            echo "ENV_NAME=stg" >> $GITHUB_ENV
+            echo "AWS_ROLE_ARN=${{ secrets.ROLE_ARN_STG }}" >> $GITHUB_ENV
+          else
+            echo "ENV_NAME=dev" >> $GITHUB_ENV
+            echo "AWS_ROLE_ARN=${{ secrets.ROLE_ARN_DEV }}" >> $GITHUB_ENV
+          fi
+        shell: bash
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ap-northeast-1
+      - name: Extract AWS Account ID
+        run: |
+          AWS_ACCOUNT_ID=$(echo "${{ env.AWS_ROLE_ARN }}" | cut -d':' -f5)
+          echo "AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID" >> $GITHUB_ENV
+        shell: bash
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="bucket=aws-landing-zone-cdktf-state-${{ env.ENV_NAME }}" \
+            -backend-config="key=eks-workload/terraform.tfstate" \
+            -backend-config="region=ap-northeast-1" \
+            -backend-config="dynamodb_table=aws-landing-zone-cdktf-lock-${{ env.ENV_NAME }}"
+      - name: Terraform Validate
+        run: terraform validate
+      - name: Terraform Apply
+        run: |
+          terraform apply \
+            -var="env_name=${{ env.ENV_NAME }}" \
+            -var="aws_account_id=${{ env.AWS_ACCOUNT_ID }}" \
+            -auto-approve
