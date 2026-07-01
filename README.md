@@ -316,6 +316,9 @@ EKS（Workloadアカウント）側から Log Archive（Landing Zone）アカウ
 * **障害報告書 (Post-Mortem)**: [2026-06-oom-outage.md](file:///c:/Git/learning-terraform-concepts/docs/postmortems/2026-06-oom-outage.md) ➡ メモリリークによるOOMクラッシュ（模擬）を対象とした障害事後評価書。5-Whys分析と再発防止のロードマップ定義。
 * **インシデント復旧手順書 (Runbook)**: [alb_latency_high.md](file:///c:/Git/learning-terraform-concepts/docs/runbooks/alb_latency_high.md) ➡ ALB遅延アラート受信時に、オンコール担当がトリアージから応急対応（切り戻し・WAF緊急メンテナンス等）を迅速に行うためのマニュアル。
 
+### 5. GitHub Actions による自動デプロイ (CD) への統合
+本プロジェクトは、AWS Landing Zone (AFT) 移行に対応し、環境別に S3 ステートバケットを動的に切り替えてデプロイする CD パイプライン（`iac-cd.yml`）を標準搭載しています。OIDC ロールから一時アクセスキーおよびアカウントIDを動的に切り出し、マルチアカウントへの安全な自動プロビジョニングを実行します（現在はポートフォリオ用に検証モードで動作します）。
+
 ---
 
 ## 🔮 Platform Engineering & GitOps & Chaos as Code の統合
