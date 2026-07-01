@@ -87,3 +87,13 @@ variable "datadog_app_key" {
   sensitive   = true
   default     = "dummy_app_key"
 }
+
+variable "aws_account_id" {
+  type        = string
+  description = "Target AWS Account ID"
+}
+
+variable "oidc_role_arn" {
+  type        = string
+  description = "GitHub Actions OIDC Deploy Role ARN"
+}
