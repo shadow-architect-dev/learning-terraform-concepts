@@ -102,6 +102,7 @@ resource "aws_rds_cluster" "this" {
   tags = {
     Name        = "aurora-cluster-${var.env_name}"
     Environment = var.env_name
+    Schedule    = var.env_name == "dev" ? "office-hours" : null
   }
 }
 locals {
@@ -118,6 +119,7 @@ resource "aws_rds_cluster_instance" "this" {
   tags = {
     Name        = "aurora-instance-${var.env_name}-${count.index}"
     Environment = var.env_name
+    Schedule    = var.env_name == "dev" ? "office-hours" : null
   }
 }
 # 5. ElastiCache Redis レプリケーショングループ
