@@ -280,7 +280,7 @@ EKS（Workloadアカウント）側から Log Archive（Landing Zone）アカウ
 ### 1. CI/CD による IaC 品質保証 & コスト自動予測
 [.github/workflows/iac-ci.yml](file:///c:/Git/learning-terraform-concepts/.github/workflows/iac-ci.yml) において、以下の自動化検証パイプラインを構築しています。
 * **コード品質 & 構文チェック**: プッシュ/プルリクエスト（PR）時に `terraform fmt` および `terraform validate` を自動実行します。
-* **シフトレフト・セキュリティスキャン**: **Trivy** を CI に統合し、マージ前にインフラ構成의 セキュリティ脆弱性やベストプラクティス違反（HIGH / CRITICAL 検出時）を自動で検知し、デプロイをブロックします。
+* **シフトレフト・セキュリティスキャン**: **Trivy** を CI に統合し、マージ前にインフラ構成のセキュリティ脆弱性やベストプラクティス違反（HIGH / CRITICAL 検出時）を自動で検知し、デプロイをブロックします。
 * **FinOps コスト予測**: **Infracost** を CI に組み込み、Terraform の差分から「変更による月々のAWSコストの予測増減額」を算出し、GitHub の PR に自動コメントでフィードバックします。
 
 ### 2. Monitoring as Code（Datadog による監視とSLOのコード化）
