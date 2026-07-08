@@ -100,46 +100,23 @@ terraform fmt -recursive
 terraform validate
 ```
 
-## 🚀 初期セットアップ: リモートバックエンド（S3/DynamoDB）の構築
+## 🌐 初期セットアップ: リモートバックエンド（S3/DynamoDB）の自動統合
 
-本プロジェクトは、複数人開発やデプロイ競合防止（ステートロック）を考慮し、S3とDynamoDBによるリモートバックエンド構成を採用しています。新規に構築を開始する際は、以下の「鶏と卵」問題をクリアするブートストラップ手順を実行してください。
+本プロジェクトは、AWS Landing Zone (AFT) 移行に伴い、各環境（Dev/Stg/Prod）の Terraform 状態管理（ステートロック・排他制御）をプラットフォーム側から提供される共有バックエンドへ完全統合しています。
 
-### ステップ 1: バックエンド用リソースの作成（ローカル実行）
+そのため、ワークロード側での個別の初期ブートストラップ手順（S3バケットやDynamoDBテーブルの個別作成）は **不要** です。
 
-まず、ステート保存用のS3バケットと、ロック管理用のDynamoDBテーブルをローカル管理で作成します。
+### 自動接続と適用方法
+CI/CD ワークフロー（`iac-cd.yml`）によるデプロイ時、またはローカル環境から検証・適用を行う際は、プラットフォームから提供された環境ごとのバケット名およびロック用テーブル名を `-backend-config` パラメータとして動的に注入して初期化を行います。
 
-1. `bootstrap/` ディレクトリに移動します。
-   ```bash
-   cd bootstrap
-   ```
-
-2. 初期化とプロビジョニングを実行します（この時点のステートはローカルで一時管理されます）。
-   ```bash
-   terraform init
-   terraform apply
-   ```
-
-3. 出力された `s3_bucket_name` と `dynamodb_table_name` をメモします。
-
-### ステップ 2: メインインフラへのリモートバックエンド適用（移行）
-
-作成したリソースをメインのインフラコードのバックエンドとして適用し、ステートファイルをS3へ移行します。
-
-1. ルートディレクトリに戻ります。
-   ```bash
-   cd ..
-   ```
-
-2. `providers.tf` の `backend "s3"` ブロックに、先ほどメモしたS3バケット名とDynamoDBテーブル名を入力します。
-
-3. 初期化コマンドを実行します。
-   ```bash
-   terraform init
-   ```
-
-4. ターミナルに 「ローカルのステートをリモートS3へ移行しますか？ (Do you want to copy existing state...)」 とメッセージが表示されるので、`yes` と入力します。
-
-これで、初期セットアップは完了です。以降は安全なリモートバックエンド管理下で `terraform plan` / `apply` を実行できます。
+```bash
+# 環境別のパラメータを注入して初期化を実行
+terraform init \
+  -backend-config="bucket=aws-landing-zone-cdktf-state-<env>" \
+  -backend-config="key=eks-workload/terraform.tfstate" \
+  -backend-config="region=ap-northeast-1" \
+  -backend-config="dynamodb_table=aws-landing-zone-cdktf-lock-<env>"
+```
 
 ---
 
