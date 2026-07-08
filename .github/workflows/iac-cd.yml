@@ -70,10 +70,10 @@ jobs:
       # - name: Terraform Init (Remote Backend)
       #   run: |
       #     terraform init \
-      #       -backend-config="bucket=aws-landing-zone-cdktf-state-${{ env.ENV_NAME }}" \
-      #       -backend-config="key=eks-workload/terraform.tfstate" \
+      #       -backend-config="bucket=aws-landing-zone-${{ env.ENV_NAME }}-tfstate-${{ env.AWS_ACCOUNT_ID }}" \
+      #       -backend-config="key=workload/terraform.tfstate" \
       #       -backend-config="region=ap-northeast-1" \
-      #       -backend-config="dynamodb_table=aws-landing-zone-cdktf-lock-${{ env.ENV_NAME }}"
+      #       -backend-config="dynamodb_table=terraform-state-lock"
       #
       # - name: Terraform Apply
       #   run: |
