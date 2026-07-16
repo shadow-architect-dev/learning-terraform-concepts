@@ -22,3 +22,8 @@ output "waf_web_acl_arn" {
   value       = module.waf.web_acl_arn
   description = "WAFv2 Web ACL ARN"
 }
+
+output "cloudfront_domain_name" {
+  value       = module.cloudfront.cloudfront_domain_name
+  description = "The domain name of the CloudFront distribution (only for stg/prod)"
+}

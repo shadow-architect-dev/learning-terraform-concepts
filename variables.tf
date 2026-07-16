@@ -97,3 +97,15 @@ variable "oidc_role_arn" {
   type        = string
   description = "GitHub Actions OIDC Deploy Role ARN"
 }
+
+variable "eks_alb_arn" {
+  type        = string
+  description = "The ARN of the internal Application Load Balancer to connect via VPC Origins (only for stg/prod)"
+  default     = ""
+}
+
+variable "eks_alb_dns_name" {
+  type        = string
+  description = "The DNS name of the Application Load Balancer"
+  default     = ""
+}

@@ -54,3 +54,10 @@ module "chaos" {
   vpc_id             = module.vpc.vpc_id
   private_subnet_ids = module.vpc.private_subnet_ids
 }
+
+module "cloudfront" {
+  source       = "./modules/cloudfront"
+  env_name     = var.env_name
+  alb_arn      = var.eks_alb_arn
+  alb_dns_name = var.eks_alb_dns_name
+}
