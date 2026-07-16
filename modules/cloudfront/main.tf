@@ -17,10 +17,10 @@ resource "aws_cloudfront_vpc_origin" "this" {
 resource "aws_cloudfront_distribution" "this" {
   count = var.env_name != "dev" && var.alb_arn != "" ? 1 : 0
 
-  enabled             = true
-  is_ipv6_enabled     = true
-  comment             = "CloudFront Distribution using VPC Origins for ${var.env_name}"
-  price_class         = "PriceClass_100"
+  enabled         = true
+  is_ipv6_enabled = true
+  comment         = "CloudFront Distribution using VPC Origins for ${var.env_name}"
+  price_class     = "PriceClass_100"
 
   origin {
     domain_name = var.alb_dns_name != "" ? var.alb_dns_name : "dummy.local"
